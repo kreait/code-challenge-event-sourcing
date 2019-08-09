@@ -5,6 +5,9 @@ import org.requirementsascode.ModelRunner;
 
 import contactsapp.boundary.driver_port.IReactToCommands;
 import contactsapp.boundary.internal.event.ContactListCreated;
+import contactsapp.boundary.internal.event.PersonAddedToContactList;
+import contactsapp.command.AddPersonToContactList;
+import contactsapp.command.CreateContactList;
 
 /**
  * The boundary class is the only point of communication with left-side driver
@@ -38,7 +41,13 @@ public class Boundary implements IReactToCommands {
 
 	@Override
 	public Object reactTo(Object commandObject) {
+		if(commandObject instanceof CreateContactList) {
+			return new ContactListCreated("CONTACT_LIST_1");
+		}
+		if(commandObject instanceof AddPersonToContactList) {
+			return new PersonAddedToContactList("Hanna", "CONTACT_LIST_1");
+		}
+		return null;
 		//return modelRunner.reactTo(commandObject);
-		return new ContactListCreated();
 	}
 }
