@@ -15,9 +15,13 @@ public class BoundaryTest {
 
 	private static final String CONTACT_LIST_IDENTIFIER_1 = "CONTACT_LIST_1";
 
+	// Person names
 	private static final String MAX_MUSTERMANN = "Max Mustermann";
 	private static final String BERTIL_MUTH = "Bertil Muth";
+	
+	// Company names
 	private static final String FOO_COM = "Foo.com";
+	private static final String BAR_COM = "Bar.com";
 
 	@Test
 	public void creates_empty_contact_list() {
@@ -52,6 +56,15 @@ public class BoundaryTest {
 		CompanyAddedToContactList companyAddedToContactList = addCompanyToContactList(boundary, FOO_COM,
 				CONTACT_LIST_IDENTIFIER_1);
 		assertEquals(FOO_COM, companyAddedToContactList.getName());
+	}
+	
+	@Test
+	public void creates_contact_list_with_another_company() {
+		Boundary boundary = new Boundary();
+		createContactList(boundary, CONTACT_LIST_IDENTIFIER_1);
+		CompanyAddedToContactList companyAddedToContactList = addCompanyToContactList(boundary, BAR_COM,
+				CONTACT_LIST_IDENTIFIER_1);
+		assertEquals(BAR_COM, companyAddedToContactList.getName());
 	}
 
 	private ContactListCreated createContactList(Boundary boundary, String contactListIdentifier) {
