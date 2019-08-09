@@ -2,8 +2,14 @@ package contactsapp.boundary.internal.event;
 
 public class PersonAddedToContactList {
 
+	private String personName;
+
 	public PersonAddedToContactList(String personName, String contactListIdentifier) {
-		// TODO Auto-generated constructor stub
+		this.personName = personName;
+	}
+
+	public String getName() {
+		return personName;
 	}
 
 }

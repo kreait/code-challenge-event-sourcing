@@ -41,13 +41,17 @@ public class Boundary implements IReactToCommands {
 
 	@Override
 	public Object reactTo(Object commandObject) {
-		if(commandObject instanceof CreateContactList) {
-			return new ContactListCreated("CONTACT_LIST_1");
+		if (commandObject instanceof CreateContactList) {
+			CreateContactList createContactList = (CreateContactList) commandObject;
+			return new ContactListCreated(createContactList.getId());
 		}
-		if(commandObject instanceof AddPersonToContactList) {
-			return new PersonAddedToContactList("Hanna", "CONTACT_LIST_1");
+		if (commandObject instanceof AddPersonToContactList) {
+			AddPersonToContactList addPersonToContactList = (AddPersonToContactList) commandObject;
+			PersonAddedToContactList personAddedToContactList = new PersonAddedToContactList(addPersonToContactList.getPersonName(),
+					"CONTACT_LIST_1");
+			return personAddedToContactList;
 		}
 		return null;
-		//return modelRunner.reactTo(commandObject);
+		// return modelRunner.reactTo(commandObject);
 	}
 }
