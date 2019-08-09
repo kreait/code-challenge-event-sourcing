@@ -1,0 +1,45 @@
+version = '0.1'
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'maven'
+
+sourceCompatibility = 8
+targetCompatibility = 8
+
+repositories {
+	mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'poem - hexagon',
+                   'Implementation-Version': version
+	}
+}
+
+dependencies {
+	compile 'org.requirementsascode:requirementsascodecore:1.2.1'
+  	testCompile 'junit:junit:4.12'
+}
+repositories {
+	mavenCentral()
+	maven {
+		url "https://oss.sonatype.org/content/repositories/snapshots/"
+	}
+}
+
+task javadocJar(type: Jar) {
+	classifier = 'javadoc'
+	from javadoc
+}
+
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+artifacts {
+	archives javadocJar, sourcesJar
+}
