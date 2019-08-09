@@ -6,6 +6,7 @@ import org.requirementsascode.ModelRunner;
 import contactsapp.boundary.driver_port.IReactToCommands;
 import contactsapp.boundary.internal.event.ContactListCreated;
 import contactsapp.boundary.internal.event.PersonAddedToContactList;
+import contactsapp.command.AddCompanyToContactList;
 import contactsapp.command.AddPersonToContactList;
 import contactsapp.command.CreateContactList;
 
@@ -42,16 +43,34 @@ public class Boundary implements IReactToCommands {
 	@Override
 	public Object reactTo(Object commandObject) {
 		if (commandObject instanceof CreateContactList) {
-			CreateContactList createContactList = (CreateContactList) commandObject;
-			return new ContactListCreated(createContactList.getId());
+			return createContactList(commandObject);
 		}
 		if (commandObject instanceof AddPersonToContactList) {
-			AddPersonToContactList addPersonToContactList = (AddPersonToContactList) commandObject;
-			PersonAddedToContactList personAddedToContactList = new PersonAddedToContactList(addPersonToContactList.getPersonName(),
-					"CONTACT_LIST_1");
-			return personAddedToContactList;
+			return addPersonToContactList(commandObject);
+		}
+		if (commandObject instanceof AddCompanyToContactList) {
+			return addCompanyToContactList(commandObject);
 		}
 		return null;
 		// return modelRunner.reactTo(commandObject);
+	}
+
+	private Object createContactList(Object commandObject) {
+		CreateContactList createContactList = (CreateContactList) commandObject;
+		return new ContactListCreated(createContactList.getId());
+	}
+	
+	private Object addPersonToContactList(Object commandObject) {
+		AddPersonToContactList addPersonToContactList = (AddPersonToContactList) commandObject;
+		PersonAddedToContactList personAddedToContactList = new PersonAddedToContactList(addPersonToContactList.getPersonName(),
+				"CONTACT_LIST_1");
+		return personAddedToContactList;
+	}
+	
+	private Object addCompanyToContactList(Object commandObject) {
+		AddCompanyToContactList addCompanyToContactList = (AddCompanyToContactList) commandObject;
+		CompanyAddedToContactList companyAddedToContactList = new CompanyAddedToContactList(addCompanyToContactList.getCompanyName(),
+				"CONTACT_LIST_1");
+		return companyAddedToContactList;
 	}
 }
