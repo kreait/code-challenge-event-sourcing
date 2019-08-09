@@ -2,6 +2,8 @@
 
 In a programming language of your choice, create a contacts list application.
 
+[![Discord](https://img.shields.io/discord/523866370778333184.svg?color=7289da&logo=discord)](https://discord.gg/TU8qucU)
+
 ## Goal
 
 Understand the Event Sourcing pattern by implementing it from scratch.
@@ -11,7 +13,7 @@ Understand the Event Sourcing pattern by implementing it from scratch.
 The application should have the following features:
 
 * A contacts list is a collection of contacts.
-* A contact is a natural person or a company.
+* A contact is either a natural person or a company.
 * A person has a name and can be renamed.
 * A company has a name and can be renamed.
 * A person can be part of a company.
@@ -46,7 +48,9 @@ The application should have the following features:
   as you want to be
 * Start your implementation with In Memory Persistence, try not to get 
   diverted by abstraction layers.
-
+* If you have questions about the challenge, are stuck or just want to hang
+  around with fellow developers, we'd be happy to have you on the 
+  [kreait Discord](https://discord.gg/TU8qucU)!
 
 ## Agreements
 
