@@ -22,18 +22,18 @@ public class AddPersonToContactListTest {
 
 	@Test
 	public void adds_person_to_contact_list() {
-		PersonAddedToContactList personAddedToContactList = addPersonToContactList(contactListBoundary, MAX_MUSTERMANN);
+		PersonAddedToContactList personAddedToContactList = addPersonToContactList(MAX_MUSTERMANN, contactListBoundary);
 		assertEquals(MAX_MUSTERMANN, personAddedToContactList.getPersonName());
 	}
 
 	@Test
 	public void adds_another_person_to_contact_list() {
-		PersonAddedToContactList personAddedToContactList = addPersonToContactList(contactListBoundary, BERTIL_MUTH);
+		PersonAddedToContactList personAddedToContactList = addPersonToContactList(BERTIL_MUTH, contactListBoundary);
 		assertEquals(BERTIL_MUTH, personAddedToContactList.getPersonName());
 	}
 
-	private PersonAddedToContactList addPersonToContactList(ContactListBoundary contactListBoundary,
-			String personName) {
+	private PersonAddedToContactList addPersonToContactList(String personName,
+			ContactListBoundary contactListBoundary) {
 		AddPersonToContactList commandObject = new AddPersonToContactList(personName);
 		PersonAddedToContactList personAddedToContactList = (PersonAddedToContactList) contactListBoundary
 				.reactTo(commandObject).get();

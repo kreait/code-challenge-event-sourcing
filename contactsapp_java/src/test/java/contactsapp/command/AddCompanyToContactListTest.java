@@ -22,17 +22,17 @@ public class AddCompanyToContactListTest {
 
 	@Test
 	public void adds_company_to_contact_list() {
-		CompanyAddedToContactList companyAddedToContactList = addCompanyToContactList(contactListBoundary, FOO_COM);
+		CompanyAddedToContactList companyAddedToContactList = addCompanyToContactList(FOO_COM, contactListBoundary);
 		assertEquals(FOO_COM, companyAddedToContactList.getCompanyName());
 	}
 	
 	@Test
 	public void adds_another_company_to_contact_list() {
-		CompanyAddedToContactList companyAddedToContactList = addCompanyToContactList(contactListBoundary, BAR_COM);
+		CompanyAddedToContactList companyAddedToContactList = addCompanyToContactList(BAR_COM, contactListBoundary);
 		assertEquals(BAR_COM, companyAddedToContactList.getCompanyName());
 	}
 
-	private CompanyAddedToContactList addCompanyToContactList(ContactListBoundary boundary, String companyName) { 
+	private CompanyAddedToContactList addCompanyToContactList(String companyName, ContactListBoundary boundary) { 
 		AddCompanyToContactList commandObject = new AddCompanyToContactList(companyName);
 		CompanyAddedToContactList companyAddedToContactList = (CompanyAddedToContactList) boundary.reactTo(commandObject).get();
 		return companyAddedToContactList;
