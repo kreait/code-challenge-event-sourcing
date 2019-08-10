@@ -36,7 +36,7 @@ by implementing them from scratch.
 
 ## Possible use cases
 
-Please not that these use cases and the proposed features are meant only to
+Please note that these use cases and the proposed features are meant only to
 give you an idea on what _could_ be required - they are not required in the
 scope of this challenge. Remember: this is for you, not for anybody else!
 
