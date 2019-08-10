@@ -1,4 +1,4 @@
-package contactsapp.simple;
+package contactsapp.main;
 
 /**
  * Main class that starts the hexagon example application.
