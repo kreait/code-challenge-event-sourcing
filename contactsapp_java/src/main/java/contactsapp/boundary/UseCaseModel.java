@@ -20,10 +20,12 @@ class UseCaseModel {
 
 	public static Model build(HandleAddPersonToContactList handleAddPersonToContactList,
 			HandleAddCompanyToContactList handleAddCompanyToContactList) {
+		
 		Model model = Model.builder()
 			.user(addPersonToContactList).systemPublish(handleAddPersonToContactList)
 			.user(addCompanyToContactList).systemPublish(handleAddCompanyToContactList)
 		.build();
+		
 		return model;
 	}
 }

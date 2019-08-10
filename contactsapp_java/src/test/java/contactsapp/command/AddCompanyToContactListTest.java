@@ -27,7 +27,7 @@ public class AddCompanyToContactListTest {
 	}
 	
 	@Test
-	public void adds_another_company_to_contact_list() {
+	public void adds_different_company_to_contact_list() {
 		CompanyAddedToContactList companyAddedToContactList = addCompanyToContactList(BAR_COM, contactListBoundary);
 		assertEquals(BAR_COM, companyAddedToContactList.getCompanyName());
 	}

@@ -29,7 +29,7 @@ public class ContactListBoundary {
 
 	public ContactListBoundary() {
 		this.contactList = new ContactList();
-		this.modelRunner = new ModelRunner().run(buildModel());
+		this.modelRunner = new ModelRunner().publishWith(contactList).run(buildModel());
 	}
 
 	/**
@@ -46,5 +46,9 @@ public class ContactListBoundary {
 
 	public Optional<Object> reactTo(Object commandObject) {
 		return modelRunner.reactTo(commandObject);
+	}
+
+	public ContactList getContactList() {
+		return contactList;
 	}
 }

@@ -27,7 +27,7 @@ public class AddPersonToContactListTest {
 	}
 
 	@Test
-	public void adds_another_person_to_contact_list() {
+	public void adds_different_person_to_contact_list() {
 		PersonAddedToContactList personAddedToContactList = addPersonToContactList(BERTIL_MUTH, contactListBoundary);
 		assertEquals(BERTIL_MUTH, personAddedToContactList.getPersonName());
 	}
