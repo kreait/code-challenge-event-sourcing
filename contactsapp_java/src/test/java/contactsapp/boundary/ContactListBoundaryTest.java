@@ -52,13 +52,13 @@ public class ContactListBoundaryTest {
 
 	private PersonAddedToContactList addPersonToContactList(ContactListBoundary contactListBoundary, String personName) {
 		AddPersonToContactList commandObject = new AddPersonToContactList(personName);
-		PersonAddedToContactList personAddedToContactList = (PersonAddedToContactList) contactListBoundary.reactTo(commandObject);
+		PersonAddedToContactList personAddedToContactList = (PersonAddedToContactList) contactListBoundary.reactTo(commandObject).get();
 		return personAddedToContactList;
 	}
 
 	private CompanyAddedToContactList addCompanyToContactList(ContactListBoundary boundary, String companyName) { 
 		AddCompanyToContactList commandObject = new AddCompanyToContactList(companyName);
-		CompanyAddedToContactList companyAddedToContactList = (CompanyAddedToContactList) boundary.reactTo(commandObject);
+		CompanyAddedToContactList companyAddedToContactList = (CompanyAddedToContactList) boundary.reactTo(commandObject).get();
 		return companyAddedToContactList;
 	}
 }

@@ -1,13 +1,13 @@
 package contactsapp.boundary;
 
+import java.util.Optional;
+
 import org.requirementsascode.Model;
 import org.requirementsascode.ModelRunner;
 
+import contactsapp.boundary.internal.command_handler.HandleAddCompanyToContactList;
+import contactsapp.boundary.internal.command_handler.HandleAddPersonToContactList;
 import contactsapp.boundary.internal.domain.ContactList;
-import contactsapp.boundary.internal.event.CompanyAddedToContactList;
-import contactsapp.boundary.internal.event.PersonAddedToContactList;
-import contactsapp.command.AddCompanyToContactList;
-import contactsapp.command.AddPersonToContactList;
 
 /**
  * The boundary class is the only point of communication with the outside world.
@@ -32,35 +32,19 @@ public class ContactListBoundary {
 		this.modelRunner = new ModelRunner().run(buildModel());
 	}
 
+	/**
+	 * Injects command handler(s) into use case model, to tie them to command types.
+	 * 
+	 * @return the use case model that has been build
+	 */
 	private Model buildModel() {
-		// Inject command handler(s) into use case model, to tie them to command
-		// types.
-		Model model = UseCaseModel.build();
+		HandleAddPersonToContactList handleAddPersonToContactList = new HandleAddPersonToContactList();
+		HandleAddCompanyToContactList handleAddCompanyToContactList = new HandleAddCompanyToContactList();
+		Model model = UseCaseModel.build(handleAddPersonToContactList, handleAddCompanyToContactList);
 		return model;
 	}
 
-	public Object reactTo(Object commandObject) {
-		if (commandObject instanceof AddPersonToContactList) {
-			return addPersonToContactList(commandObject);
-		}
-		if (commandObject instanceof AddCompanyToContactList) {
-			return addCompanyToContactList(commandObject);
-		}
-		return null;
-		// return modelRunner.reactTo(commandObject);
-	}
-
-	private Object addPersonToContactList(Object commandObject) {
-		AddPersonToContactList addPersonToContactList = (AddPersonToContactList) commandObject;
-		PersonAddedToContactList personAddedToContactList = new PersonAddedToContactList(
-				addPersonToContactList.getPersonName());
-		return personAddedToContactList;
-	}
-
-	private Object addCompanyToContactList(Object commandObject) {
-		AddCompanyToContactList addCompanyToContactList = (AddCompanyToContactList) commandObject;
-		CompanyAddedToContactList companyAddedToContactList = new CompanyAddedToContactList(
-				addCompanyToContactList.getCompanyName());
-		return companyAddedToContactList;
+	public Optional<Object> reactTo(Object commandObject) {
+		return modelRunner.reactTo(commandObject);
 	}
 }
