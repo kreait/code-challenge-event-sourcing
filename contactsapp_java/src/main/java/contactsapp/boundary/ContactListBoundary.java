@@ -3,35 +3,33 @@ package contactsapp.boundary;
 import org.requirementsascode.Model;
 import org.requirementsascode.ModelRunner;
 
-import contactsapp.boundary.driver_port.IReactToCommands;
 import contactsapp.boundary.internal.domain.ContactList;
-import contactsapp.boundary.internal.event.ContactListCreated;
+import contactsapp.boundary.internal.event.CompanyAddedToContactList;
 import contactsapp.boundary.internal.event.PersonAddedToContactList;
 import contactsapp.command.AddCompanyToContactList;
 import contactsapp.command.AddPersonToContactList;
-import contactsapp.command.CreateContactList;
 
 /**
- * The boundary class is the only point of communication with left-side driver
- * adapters. It accepts commands, and calls the appropriate command handler.
+ * The boundary class is the only point of communication with the outside world.
+ * It accepts commands, and calls the appropriate command handler.
  * 
  * On creation, this class wires up the dependencies between command types and
  * command handlers, by injecting the command handlers into a use case model.
  * 
  * After creation, this class sends each command it receives to the runner of
  * the use case model. The model runner then dispatches the command to the
- * appropriate command handler, which in turn calls the driven adapters.
+ * appropriate command handler, and publishes them to the event store.
  * 
  * @author b_muth
  *
  */
-public class Boundary implements IReactToCommands {
-
+public class ContactListBoundary {
 	private ModelRunner modelRunner;
+	private ContactList contactList;
 
-	public Boundary() {
-		Model model = buildModel();
-		modelRunner = new ModelRunner().run(model);
+	public ContactListBoundary() {
+		this.contactList = new ContactList();
+		this.modelRunner = new ModelRunner().run(buildModel());
 	}
 
 	private Model buildModel() {
@@ -41,11 +39,7 @@ public class Boundary implements IReactToCommands {
 		return model;
 	}
 
-	@Override
 	public Object reactTo(Object commandObject) {
-		if (commandObject instanceof CreateContactList) {
-			return createContactList(commandObject);
-		}
 		if (commandObject instanceof AddPersonToContactList) {
 			return addPersonToContactList(commandObject);
 		}
@@ -56,22 +50,17 @@ public class Boundary implements IReactToCommands {
 		// return modelRunner.reactTo(commandObject);
 	}
 
-	private Object createContactList(Object commandObject) {
-		CreateContactList createContactList = (CreateContactList) commandObject;
-		return new ContactListCreated(ContactList.HARDCODED_ID);
-	}
-	
 	private Object addPersonToContactList(Object commandObject) {
 		AddPersonToContactList addPersonToContactList = (AddPersonToContactList) commandObject;
-		PersonAddedToContactList personAddedToContactList = new PersonAddedToContactList(addPersonToContactList.getPersonName(),
-				"CONTACT_LIST_1");
+		PersonAddedToContactList personAddedToContactList = new PersonAddedToContactList(
+				addPersonToContactList.getPersonName());
 		return personAddedToContactList;
 	}
-	
+
 	private Object addCompanyToContactList(Object commandObject) {
 		AddCompanyToContactList addCompanyToContactList = (AddCompanyToContactList) commandObject;
-		CompanyAddedToContactList companyAddedToContactList = new CompanyAddedToContactList(addCompanyToContactList.getCompanyName(),
-				"CONTACT_LIST_1");
+		CompanyAddedToContactList companyAddedToContactList = new CompanyAddedToContactList(
+				addCompanyToContactList.getCompanyName());
 		return companyAddedToContactList;
 	}
 }
