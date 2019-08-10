@@ -1,7 +1,5 @@
 package contactsapp.boundary.internal.event;
 
-import contactsapp.boundary.internal.domain.ContactList;
-
 public class ContactListCreated {
 	private String contactListId;
 
@@ -9,7 +7,7 @@ public class ContactListCreated {
 		this.contactListId = contactListId;
 	}
 
-	public ContactList getContactList() {
-		return new ContactList(contactListId);
+	public String getId() {
+		return contactListId;
 	}
 }

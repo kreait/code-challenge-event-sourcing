@@ -1,10 +1,10 @@
 package contactsapp.boundary;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
-import contactsapp.boundary.internal.domain.ContactList;
 import contactsapp.boundary.internal.event.ContactListCreated;
 import contactsapp.boundary.internal.event.PersonAddedToContactList;
 import contactsapp.command.AddCompanyToContactList;
@@ -12,9 +12,6 @@ import contactsapp.command.AddPersonToContactList;
 import contactsapp.command.CreateContactList;
 
 public class BoundaryTest {
-
-	private static final String CONTACT_LIST_IDENTIFIER_1 = "CONTACT_LIST_1";
-
 	// Person names
 	private static final String MAX_MUSTERMANN = "Max Mustermann";
 	private static final String BERTIL_MUTH = "Bertil Muth";
@@ -26,49 +23,49 @@ public class BoundaryTest {
 	@Test
 	public void creates_empty_contact_list() {
 		Boundary boundary = new Boundary();
-		ContactListCreated contactListCreatedEvent = createContactList(boundary, CONTACT_LIST_IDENTIFIER_1);
-		String actualId = contactListIdIn(contactListCreatedEvent);
-		assertEquals(CONTACT_LIST_IDENTIFIER_1, actualId);
+		ContactListCreated contactListCreatedEvent = createContactList(boundary);
+		String contactListId = contactListCreatedEvent.getId();
+		assertNotNull(contactListId);
 	}
 
 	@Test
 	public void creates_contact_list_with_person() {
 		Boundary boundary = new Boundary();
-		createContactList(boundary, CONTACT_LIST_IDENTIFIER_1);
+		ContactListCreated contactListCreatedEvent = createContactList(boundary);
 		PersonAddedToContactList personAddedToContactList = addPersonToContactList(boundary, MAX_MUSTERMANN,
-				CONTACT_LIST_IDENTIFIER_1);
+				contactListCreatedEvent.getId());
 		assertEquals(MAX_MUSTERMANN, personAddedToContactList.getName());
 	}
 
 	@Test
 	public void creates_contact_list_with_another_person() {
 		Boundary boundary = new Boundary();
-		createContactList(boundary, CONTACT_LIST_IDENTIFIER_1);
+		ContactListCreated contactListCreatedEvent = createContactList(boundary);
 		PersonAddedToContactList personAddedToContactList = addPersonToContactList(boundary, BERTIL_MUTH,
-				CONTACT_LIST_IDENTIFIER_1);
+				contactListCreatedEvent.getId());
 		assertEquals(BERTIL_MUTH, personAddedToContactList.getName());
 	}
 
 	@Test
 	public void creates_contact_list_with_company() {
 		Boundary boundary = new Boundary();
-		createContactList(boundary, CONTACT_LIST_IDENTIFIER_1);
+		ContactListCreated contactListCreatedEvent = createContactList(boundary);
 		CompanyAddedToContactList companyAddedToContactList = addCompanyToContactList(boundary, FOO_COM,
-				CONTACT_LIST_IDENTIFIER_1);
+				contactListCreatedEvent.getId());
 		assertEquals(FOO_COM, companyAddedToContactList.getName());
 	}
 	
 	@Test
 	public void creates_contact_list_with_another_company() {
 		Boundary boundary = new Boundary();
-		createContactList(boundary, CONTACT_LIST_IDENTIFIER_1);
+		ContactListCreated contactListCreatedEvent = createContactList(boundary);
 		CompanyAddedToContactList companyAddedToContactList = addCompanyToContactList(boundary, BAR_COM,
-				CONTACT_LIST_IDENTIFIER_1);
+				contactListCreatedEvent.getId());
 		assertEquals(BAR_COM, companyAddedToContactList.getName());
 	}
 
-	private ContactListCreated createContactList(Boundary boundary, String contactListIdentifier) {
-		CreateContactList commandObject = new CreateContactList(contactListIdentifier);
+	private ContactListCreated createContactList(Boundary boundary) {
+		CreateContactList commandObject = new CreateContactList();
 		ContactListCreated contactListCreatedEvent = (ContactListCreated) boundary.reactTo(commandObject);
 		return contactListCreatedEvent;
 	}
@@ -85,13 +82,5 @@ public class BoundaryTest {
 		AddCompanyToContactList commandObject = new AddCompanyToContactList(companyName, contactListIdentifier);
 		CompanyAddedToContactList companyAddedToContactList = (CompanyAddedToContactList) boundary.reactTo(commandObject);
 		return companyAddedToContactList;
-	}
-
-	private String contactListIdIn(Object publishedEvent) {
-		ContactListCreated contactListCreated = (ContactListCreated) publishedEvent;
-
-		ContactList contactList = contactListCreated.getContactList();
-		String actualId = contactList.getId();
-		return actualId;
 	}
 }

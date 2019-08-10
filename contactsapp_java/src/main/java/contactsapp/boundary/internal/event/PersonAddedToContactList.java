@@ -12,4 +12,8 @@ public class PersonAddedToContactList {
 		return personName;
 	}
 
+	public String getPersonName() {
+		return personName;
+	}
+
 }

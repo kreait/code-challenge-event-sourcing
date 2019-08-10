@@ -1,14 +1,12 @@
 package contactsapp.boundary.internal.domain;
 
 public class ContactList {
-	private String id;
+	public static final String HARDCODED_ID = "CONTACT_LIST_1";
 
-	public ContactList(String id) {
-		this.id = id;
+	public ContactList() {
 	}
 
 	public String getId() {
-		return id;
+		return HARDCODED_ID;
 	}
-
 }

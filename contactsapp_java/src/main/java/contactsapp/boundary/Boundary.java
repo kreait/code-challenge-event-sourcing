@@ -4,6 +4,7 @@ import org.requirementsascode.Model;
 import org.requirementsascode.ModelRunner;
 
 import contactsapp.boundary.driver_port.IReactToCommands;
+import contactsapp.boundary.internal.domain.ContactList;
 import contactsapp.boundary.internal.event.ContactListCreated;
 import contactsapp.boundary.internal.event.PersonAddedToContactList;
 import contactsapp.command.AddCompanyToContactList;
@@ -57,7 +58,7 @@ public class Boundary implements IReactToCommands {
 
 	private Object createContactList(Object commandObject) {
 		CreateContactList createContactList = (CreateContactList) commandObject;
-		return new ContactListCreated(createContactList.getId());
+		return new ContactListCreated(ContactList.HARDCODED_ID);
 	}
 	
 	private Object addPersonToContactList(Object commandObject) {
