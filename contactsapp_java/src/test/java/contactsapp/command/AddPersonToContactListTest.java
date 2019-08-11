@@ -17,7 +17,7 @@ public class AddPersonToContactListTest {
 
 	@Before
 	public void setup() {
-		contactListBoundary = new ContactListBoundary();
+		contactListBoundary = new ContactListBoundary(event -> {});
 	}
 
 	@Test
@@ -36,7 +36,7 @@ public class AddPersonToContactListTest {
 			ContactListBoundary contactListBoundary) {
 		AddPersonToContactList commandObject = new AddPersonToContactList(personName);
 		PersonAddedToContactList personAddedToContactList = (PersonAddedToContactList) contactListBoundary
-				.reactTo(commandObject).get();
+				.reactToCommand(commandObject).get();
 		return personAddedToContactList;
 	}
 }

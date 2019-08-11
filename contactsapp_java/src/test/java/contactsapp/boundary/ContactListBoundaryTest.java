@@ -26,7 +26,7 @@ public class ContactListBoundaryTest {
 
 	@Before
 	public void setup() {
-		contactListBoundary = new ContactListBoundary();
+		contactListBoundary = new ContactListBoundary(event -> contactListBoundary.reactToEvent(event));
 	}
 	
 	@Test
@@ -68,15 +68,15 @@ public class ContactListBoundaryTest {
 	}
 	
 	private ContactList addPersonToContactList(String personName, ContactListBoundary boundary) { 
-		AddPersonToContactList commandObject = new AddPersonToContactList(personName);
-		boundary.reactTo(commandObject);
+		AddPersonToContactList command = new AddPersonToContactList(personName);
+		boundary.reactToCommand(command);
 		ContactList contactList = contactListBoundary.getContactList();
 		return contactList;
 	}
 
 	private ContactList addCompanyToContactList(String companyName, ContactListBoundary boundary) { 
-		AddCompanyToContactList commandObject = new AddCompanyToContactList(companyName);
-		boundary.reactTo(commandObject);
+		AddCompanyToContactList command = new AddCompanyToContactList(companyName);
+		boundary.reactToCommand(command);
 		ContactList contactList = contactListBoundary.getContactList();
 		return contactList;
 	}
