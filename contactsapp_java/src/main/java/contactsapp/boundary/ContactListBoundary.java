@@ -86,8 +86,6 @@ public class ContactListBoundary {
 	 * aggregate root, i.e. ContactList.
 	 * 
 	 * @param eventObject the event to send
-	 * @return the event published by the command handler, or an empty optional if
-	 *         none was published.
 	 */
 	public void reactToEvent(Object eventObject) {
 		eventHandlingModelRunner.reactTo(eventObject);
