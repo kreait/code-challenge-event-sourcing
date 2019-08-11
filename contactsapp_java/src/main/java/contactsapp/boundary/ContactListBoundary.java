@@ -18,12 +18,8 @@ import contactsapp.command.AddPersonToContactList;
  * The boundary class is the only point of communication with the outside world.
  * It accepts commands, and calls the appropriate command handler.
  * 
- * On creation, this class wires up the dependencies between command types and
- * command handlers, by injecting the command handlers into a use case model.
- * 
- * After creation, this class sends each command it receives to the runner of
- * the use case model. The model runner then dispatches the command to the
- * appropriate command handler, and publishes them to the event store.
+ * The command handler transforms the commands into events.
+ * The events are handled by the event publisher specified as constructor argument.
  * 
  * @author b_muth
  *
