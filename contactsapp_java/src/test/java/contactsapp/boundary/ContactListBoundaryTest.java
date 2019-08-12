@@ -13,6 +13,7 @@ import contactsapp.boundary.internal.domain.Contact;
 import contactsapp.boundary.internal.domain.ContactList;
 import contactsapp.command.AddCompany;
 import contactsapp.command.AddPerson;
+import eventstore.EventStore;
 
 public class ContactListBoundaryTest {
 	// Person names
@@ -23,12 +24,12 @@ public class ContactListBoundaryTest {
 	private static final String FOO_COM = "Foo.com";
 	private static final String BAR_COM = "Bar.com";
 	
-	private TestEventStore testEventStore;
+	private EventStore testEventStore;
 	private ContactListBoundary contactListBoundary;
 
 	@Before
 	public void setup() {
-		testEventStore = new TestEventStore();
+		testEventStore = new EventStore();
 		contactListBoundary = new ContactListBoundary(testEventStore);
 		testEventStore.addSubscriber(contactListBoundary::reactToEvent);
 	}

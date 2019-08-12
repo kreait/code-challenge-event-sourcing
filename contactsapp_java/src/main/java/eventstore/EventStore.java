@@ -1,4 +1,4 @@
-package contactsapp.boundary;
+package eventstore;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -7,11 +7,11 @@ import java.util.function.Consumer;
 
 import contactsapp.boundary.internal.event.BoundaryInternalEvent;
 
-public class TestEventStore implements Consumer<Object> {
+public class EventStore implements Consumer<Object> {
 	private List<Object> storedEvents;
 	private List<Consumer<Object>> subscribers;
 	
-	public TestEventStore() {
+	public EventStore() {
 		this.storedEvents = new ArrayList<>();
 		this.subscribers = new ArrayList<>();
 	}
