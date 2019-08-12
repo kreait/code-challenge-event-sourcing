@@ -16,16 +16,30 @@ public class TestEventStore implements Consumer<Object> {
 	public void addSubscriber(Consumer<Object> subscriber) {
 		subscribers.add(subscriber);
 	}
-
-	@Override
-	public void accept(Object event) {
-		for (Consumer<Object> subscriber : subscribers) {
-			storeEventAndNotifySubscriber(event, subscriber);
+	
+	public void replay() {
+		for (Object storedEvent : storedEvents) {
+			notifySubscribers(storedEvent);
 		}
 	}
 
-	private void storeEventAndNotifySubscriber(Object event, Consumer<Object> subscriber) {
+	@Override
+	public void accept(Object event) {
+		storeEvent(event);
+		notifySubscribers(event);
+	}
+
+	private void storeEvent(Object event) {
 		storedEvents.add(event);
+	}
+	
+	private void notifySubscribers(Object event) {
+		for (Consumer<Object> subscriber : subscribers) {
+			notifySubscriber(event, subscriber);
+		}
+	}
+
+	private void notifySubscriber(Object event, Consumer<Object> subscriber) {
 		subscriber.accept(event);
 	}
 }
