@@ -22,11 +22,12 @@ public class ContactListBoundaryTest {
 	private static final String FOO_COM = "Foo.com";
 	private static final String BAR_COM = "Bar.com";
 	
+	private TestEventStore testEventStore;
 	private ContactListBoundary contactListBoundary;
 
 	@Before
 	public void setup() {
-		TestEventStore testEventStore = new TestEventStore();
+		testEventStore = new TestEventStore();
 		contactListBoundary = new ContactListBoundary(testEventStore);
 		testEventStore.addSubscriber(contactListBoundary::reactToEvent);
 	}
@@ -67,6 +68,31 @@ public class ContactListBoundaryTest {
 		List<Contact> contacts = contactList.getContacts();
 		assertEquals(1, contacts.size());
 		assertEquals(BAR_COM, contacts.get(0).getName());
+	}
+	
+	@Test
+	public void replays_zero_events() {
+		ContactListBoundary newContactListBoundary = new ContactListBoundary(testEventStore);
+		testEventStore.addSubscriber(newContactListBoundary::reactToEvent);
+		testEventStore.replay();
+		
+		List<Contact> contacts = newContactListBoundary.getContactList().getContacts();
+		assertTrue(contacts.isEmpty());
+	}
+	
+	@Test
+	public void replays_two_events() {
+		addPerson(MAX_MUSTERMANN, contactListBoundary);
+		addCompany(BAR_COM, contactListBoundary);
+		
+		ContactListBoundary newContactListBoundary = new ContactListBoundary(testEventStore);
+		testEventStore.addSubscriber(newContactListBoundary::reactToEvent);
+		testEventStore.replay();
+		
+		List<Contact> contacts = newContactListBoundary.getContactList().getContacts();
+		assertEquals(2, contacts.size());
+		assertEquals(MAX_MUSTERMANN, contacts.get(0).getName());
+		assertEquals(BAR_COM, contacts.get(1).getName());
 	}
 	
 	private ContactList addPerson(String personName, ContactListBoundary boundary) { 

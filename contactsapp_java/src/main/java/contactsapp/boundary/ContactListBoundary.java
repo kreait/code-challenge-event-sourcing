@@ -86,7 +86,7 @@ public class ContactListBoundary {
 		eventHandlingModelRunner.reactTo(eventObject);
 	}
 
-	public ContactList getContactList() {
+	ContactList getContactList() {
 		return contactList;
 	}
 }
