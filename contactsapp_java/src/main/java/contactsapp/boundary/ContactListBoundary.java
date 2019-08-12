@@ -1,6 +1,5 @@
 package contactsapp.boundary;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.requirementsascode.Model;
@@ -69,19 +68,17 @@ public class ContactListBoundary {
 
 	/**
 	 * Reacts to the specified command object by sending it to its command handler,
-	 * if there is one, and returning its published event.
+	 * if there is one.
 	 * 
 	 * @param commandObject the command to send
-	 * @return the event published by the command handler, or an empty optional if
-	 *         none was published.
 	 */
-	public Optional<Object> reactToCommand(Object commandObject) {
-		return commandHandlingModelRunner.reactTo(commandObject);
+	public void reactToCommand(Object commandObject) {
+		commandHandlingModelRunner.reactTo(commandObject);
 	}
 
 	/**
-	 * Reacts to the specified event by sending it to the appropriate method of the
-	 * aggregate root, i.e. ContactList.
+	 * Reacts to the specified event by sending it to its event handler,
+	 * if there is one.
 	 * 
 	 * @param eventObject the event to send
 	 */

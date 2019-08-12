@@ -5,11 +5,11 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import contactsapp.boundary.ContactListBoundaryTest;
-import contactsapp.command.AddCompanyToContactListTest;
-import contactsapp.command.AddPersonToContactListTest;
+import contactsapp.boundary.internal.command_handler.HandleAddCompanyToContactListTest;
+import contactsapp.boundary.internal.command_handler.HandleAddPersonToContactListTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({ AddCompanyToContactListTest.class, AddPersonToContactListTest.class, ContactListBoundaryTest.class })
+@SuiteClasses({ HandleAddCompanyToContactListTest.class, HandleAddPersonToContactListTest.class, ContactListBoundaryTest.class })
 public class AllTests {
 
 }
