@@ -26,7 +26,9 @@ public class ContactListBoundaryTest {
 
 	@Before
 	public void setup() {
-		contactListBoundary = new ContactListBoundary(event -> contactListBoundary.reactToEvent(event));
+		TestEventStore testEventStore = new TestEventStore();
+		contactListBoundary = new ContactListBoundary(testEventStore);
+		testEventStore.addSubscriber(contactListBoundary::reactToEvent);
 	}
 	
 	@Test
