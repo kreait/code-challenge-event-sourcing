@@ -1,9 +1,16 @@
 package contactsapp.boundary.internal.event;
 
-public class PersonAdded {
-	private String personName;
+import java.time.Instant;
 
+public class PersonAdded extends BoundaryInternalEvent{
+	private String personName;
+	
 	public PersonAdded(String personName) {
+		this(Instant.now(), personName);
+	}
+
+	public PersonAdded(Instant timestamp, String personName) {
+		super(timestamp);
 		this.personName = personName;
 	}
 

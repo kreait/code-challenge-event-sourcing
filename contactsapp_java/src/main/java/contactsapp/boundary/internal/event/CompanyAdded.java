@@ -1,9 +1,16 @@
 package contactsapp.boundary.internal.event;
 
-public class CompanyAdded {
+import java.time.Instant;
+
+public class CompanyAdded extends BoundaryInternalEvent{
 	private String companyName;
 
 	public CompanyAdded(String companyName) {
+		this(Instant.now(), companyName);
+	}
+	
+	public CompanyAdded(Instant timestamp, String companyName) {
+		super(timestamp);
 		this.companyName = companyName;
 	}
 
