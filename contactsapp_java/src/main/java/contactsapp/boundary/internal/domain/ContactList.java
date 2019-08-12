@@ -1,10 +1,8 @@
 package contactsapp.boundary.internal.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import contactsapp.boundary.internal.event.CompanyAddedToContactList;
-import contactsapp.boundary.internal.event.PersonAddedToContactList;
 
 public class ContactList{
 	private List<Contact> contacts;
@@ -13,19 +11,17 @@ public class ContactList{
 		this.contacts = new ArrayList<>();
 	}
 	
-	public void addPerson(PersonAddedToContactList personAddedToContactList) {
-		String personName = personAddedToContactList.getPersonName();
+	public void addPerson(String personName) {
 		Person person = new Person(personName);
 		contacts.add(person);
 	}
 	
-	public void addCompany(CompanyAddedToContactList companyAddedToContactList) {
-		String companyName = companyAddedToContactList.getCompanyName();
+	public void addCompany(String companyName) {
 		Company company = new Company(companyName);
 		contacts.add(company);
 	}
 
 	public List<Contact> getContacts() {
-		return contacts;
+		return Collections.unmodifiableList(contacts);
 	}
 }

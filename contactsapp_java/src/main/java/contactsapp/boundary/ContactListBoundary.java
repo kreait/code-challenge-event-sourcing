@@ -11,6 +11,8 @@ import contactsapp.boundary.internal.command_handler.HandleAddPersonToContactLis
 import contactsapp.boundary.internal.domain.ContactList;
 import contactsapp.boundary.internal.event.CompanyAddedToContactList;
 import contactsapp.boundary.internal.event.PersonAddedToContactList;
+import contactsapp.boundary.internal.event_handler.HandleCompanyAddedToContactList;
+import contactsapp.boundary.internal.event_handler.HandlePersonAddedToContactList;
 import contactsapp.command.AddCompanyToContactList;
 import contactsapp.command.AddPersonToContactList;
 
@@ -58,8 +60,8 @@ public class ContactListBoundary {
 	 */
 	private Model eventHandlingModel() {
 		Model model = Model.builder()
-			.on(PersonAddedToContactList.class).system(contactList::addPerson)
-			.on(CompanyAddedToContactList.class).system(contactList::addCompany)
+			.on(PersonAddedToContactList.class).system(new HandlePersonAddedToContactList(contactList))
+			.on(CompanyAddedToContactList.class).system(new HandleCompanyAddedToContactList(contactList))
 		.build();
 
 		return model;

@@ -7,10 +7,8 @@ import contactsapp.command.AddPersonToContactList;
 
 public class HandleAddPersonToContactList implements Function<AddPersonToContactList, Object> {
 	@Override
-	public Object apply(AddPersonToContactList addPersonToContactList) {
-		PersonAddedToContactList personAddedToContactList = new PersonAddedToContactList(
-				addPersonToContactList.getPersonName());
+	public Object apply(AddPersonToContactList command) {
+		PersonAddedToContactList personAddedToContactList = new PersonAddedToContactList(command.getPersonName());
 		return personAddedToContactList;
 	}
-
 }

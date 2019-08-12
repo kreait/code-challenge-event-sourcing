@@ -7,10 +7,8 @@ import contactsapp.command.AddCompanyToContactList;
 
 public class HandleAddCompanyToContactList implements Function<AddCompanyToContactList, Object> {
 	@Override
-	public Object apply(AddCompanyToContactList addCompanyToContactList) {
-		CompanyAddedToContactList companyAddedToContactList = new CompanyAddedToContactList(
-				addCompanyToContactList.getCompanyName());
+	public Object apply(AddCompanyToContactList command) {
+		CompanyAddedToContactList companyAddedToContactList = new CompanyAddedToContactList(command.getCompanyName());
 		return companyAddedToContactList;
 	}
-
 }
