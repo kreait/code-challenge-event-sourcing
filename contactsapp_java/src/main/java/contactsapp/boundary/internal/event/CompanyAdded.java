@@ -1,9 +1,9 @@
 package contactsapp.boundary.internal.event;
 
-public class CompanyAddedToContactList {
+public class CompanyAdded {
 	private String companyName;
 
-	public CompanyAddedToContactList(String companyName) {
+	public CompanyAdded(String companyName) {
 		this.companyName = companyName;
 	}
 
@@ -27,7 +27,7 @@ public class CompanyAddedToContactList {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CompanyAddedToContactList other = (CompanyAddedToContactList) obj;
+		CompanyAdded other = (CompanyAdded) obj;
 		if (companyName == null) {
 			if (other.companyName != null)
 				return false;

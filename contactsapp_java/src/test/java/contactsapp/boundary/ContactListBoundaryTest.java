@@ -10,8 +10,8 @@ import org.junit.Test;
 
 import contactsapp.boundary.internal.domain.Contact;
 import contactsapp.boundary.internal.domain.ContactList;
-import contactsapp.command.AddCompanyToContactList;
-import contactsapp.command.AddPersonToContactList;
+import contactsapp.command.AddCompany;
+import contactsapp.command.AddPerson;
 
 public class ContactListBoundaryTest {
 	// Person names
@@ -37,7 +37,7 @@ public class ContactListBoundaryTest {
 	
 	@Test
 	public void adds_person_to_contact_list() {
-		ContactList contactList = addPersonToContactList(BERTIL_MUTH, contactListBoundary);
+		ContactList contactList = addPerson(BERTIL_MUTH, contactListBoundary);
 		List<Contact> contacts = contactList.getContacts();
 		assertEquals(1, contacts.size());
 		assertEquals(BERTIL_MUTH, contacts.get(0).getName());
@@ -45,7 +45,7 @@ public class ContactListBoundaryTest {
 
 	@Test
 	public void adds_different_person_to_contact_list() {
-		ContactList contactList = addPersonToContactList(MAX_MUSTERMANN, contactListBoundary);
+		ContactList contactList = addPerson(MAX_MUSTERMANN, contactListBoundary);
 		List<Contact> contacts = contactList.getContacts();
 		assertEquals(1, contacts.size());
 		assertEquals(MAX_MUSTERMANN, contacts.get(0).getName());
@@ -53,7 +53,7 @@ public class ContactListBoundaryTest {
 	
 	@Test
 	public void adds_company_to_contact_list() {
-		ContactList contactList = addCompanyToContactList(FOO_COM, contactListBoundary);
+		ContactList contactList = addCompany(FOO_COM, contactListBoundary);
 		List<Contact> contacts = contactList.getContacts();
 		assertEquals(1, contacts.size());
 		assertEquals(FOO_COM, contacts.get(0).getName());
@@ -61,21 +61,21 @@ public class ContactListBoundaryTest {
 	
 	@Test
 	public void adds_different_company_to_contact_list() {
-		ContactList contactList = addCompanyToContactList(BAR_COM, contactListBoundary);
+		ContactList contactList = addCompany(BAR_COM, contactListBoundary);
 		List<Contact> contacts = contactList.getContacts();
 		assertEquals(1, contacts.size());
 		assertEquals(BAR_COM, contacts.get(0).getName());
 	}
 	
-	private ContactList addPersonToContactList(String personName, ContactListBoundary boundary) { 
-		AddPersonToContactList command = new AddPersonToContactList(personName);
+	private ContactList addPerson(String personName, ContactListBoundary boundary) { 
+		AddPerson command = new AddPerson(personName);
 		boundary.reactToCommand(command);
 		ContactList contactList = contactListBoundary.getContactList();
 		return contactList;
 	}
 
-	private ContactList addCompanyToContactList(String companyName, ContactListBoundary boundary) { 
-		AddCompanyToContactList command = new AddCompanyToContactList(companyName);
+	private ContactList addCompany(String companyName, ContactListBoundary boundary) { 
+		AddCompany command = new AddCompany(companyName);
 		boundary.reactToCommand(command);
 		ContactList contactList = contactListBoundary.getContactList();
 		return contactList;

@@ -5,15 +5,15 @@ import java.util.function.Consumer;
 import org.requirementsascode.Model;
 import org.requirementsascode.ModelRunner;
 
-import contactsapp.boundary.internal.command_handler.HandleAddCompanyToContactList;
-import contactsapp.boundary.internal.command_handler.HandleAddPersonToContactList;
+import contactsapp.boundary.internal.command_handler.HandleAddCompany;
+import contactsapp.boundary.internal.command_handler.HandleAddPerson;
 import contactsapp.boundary.internal.domain.ContactList;
-import contactsapp.boundary.internal.event.CompanyAddedToContactList;
-import contactsapp.boundary.internal.event.PersonAddedToContactList;
-import contactsapp.boundary.internal.event_handler.HandleCompanyAddedToContactList;
-import contactsapp.boundary.internal.event_handler.HandlePersonAddedToContactList;
-import contactsapp.command.AddCompanyToContactList;
-import contactsapp.command.AddPersonToContactList;
+import contactsapp.boundary.internal.event.CompanyAdded;
+import contactsapp.boundary.internal.event.PersonAdded;
+import contactsapp.boundary.internal.event_handler.HandleCompanyAdded;
+import contactsapp.boundary.internal.event_handler.HandlePersonAdded;
+import contactsapp.command.AddCompany;
+import contactsapp.command.AddPerson;
 
 /**
  * The boundary class is the only point of communication with the outside world.
@@ -44,8 +44,8 @@ public class ContactListBoundary {
 	 */
 	private Model commandHandlingModel() {
 		Model model = Model.builder()
-			.user(AddPersonToContactList.class).systemPublish(new HandleAddPersonToContactList())
-			.user(AddCompanyToContactList.class).systemPublish(new HandleAddCompanyToContactList())
+			.user(AddPerson.class).systemPublish(new HandleAddPerson())
+			.user(AddCompany.class).systemPublish(new HandleAddCompany())
 		.build();
 		
 		return model;
@@ -59,8 +59,8 @@ public class ContactListBoundary {
 	 */
 	private Model eventHandlingModel() {
 		Model model = Model.builder()
-			.on(PersonAddedToContactList.class).system(new HandlePersonAddedToContactList(contactList))
-			.on(CompanyAddedToContactList.class).system(new HandleCompanyAddedToContactList(contactList))
+			.on(PersonAdded.class).system(new HandlePersonAdded(contactList))
+			.on(CompanyAdded.class).system(new HandleCompanyAdded(contactList))
 		.build();
 
 		return model;

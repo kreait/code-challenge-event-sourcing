@@ -1,9 +1,9 @@
 package contactsapp.boundary.internal.event;
 
-public class PersonAddedToContactList {
+public class PersonAdded {
 	private String personName;
 
-	public PersonAddedToContactList(String personName) {
+	public PersonAdded(String personName) {
 		this.personName = personName;
 	}
 
@@ -27,7 +27,7 @@ public class PersonAddedToContactList {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		PersonAddedToContactList other = (PersonAddedToContactList) obj;
+		PersonAdded other = (PersonAdded) obj;
 		if (personName == null) {
 			if (other.personName != null)
 				return false;

@@ -1,9 +1,9 @@
 package contactsapp.command;
 
-public class AddCompanyToContactList {
+public class AddCompany {
 	private String companyName;
 
-	public AddCompanyToContactList(String companyName) {
+	public AddCompany(String companyName) {
 		this.companyName = companyName;
 	}
 

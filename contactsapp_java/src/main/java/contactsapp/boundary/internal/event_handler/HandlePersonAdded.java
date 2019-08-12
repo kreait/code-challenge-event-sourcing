@@ -3,17 +3,17 @@ package contactsapp.boundary.internal.event_handler;
 import java.util.function.Consumer;
 
 import contactsapp.boundary.internal.domain.ContactList;
-import contactsapp.boundary.internal.event.PersonAddedToContactList;
+import contactsapp.boundary.internal.event.PersonAdded;
 
-public class HandlePersonAddedToContactList implements Consumer<PersonAddedToContactList> {
+public class HandlePersonAdded implements Consumer<PersonAdded> {
 	private ContactList contactList;
 
-	public HandlePersonAddedToContactList(ContactList contactList) {
+	public HandlePersonAdded(ContactList contactList) {
 		this.contactList = contactList;
 	}
 	
 	@Override
-	public void accept(PersonAddedToContactList event) {
+	public void accept(PersonAdded event) {
 		String personName = event.getPersonName();
 		contactList.addPerson(personName);
 	}

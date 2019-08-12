@@ -5,25 +5,25 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import contactsapp.boundary.internal.event.PersonAddedToContactList;
-import contactsapp.command.AddPersonToContactList;
+import contactsapp.boundary.internal.event.PersonAdded;
+import contactsapp.command.AddPerson;
 
-public class HandleAddPersonToContactListTest {
+public class HandleAddPersonTest {
 	// Person names
 	private static final String MAX_MUSTERMANN = "Max Mustermann";
 	private static final String BERTIL_MUTH = "Bertil Muth";
 	
-	private HandleAddPersonToContactList commandHandler;
+	private HandleAddPerson commandHandler;
 	
 	@Before
 	public void setup() {
-		commandHandler = new HandleAddPersonToContactList();
+		commandHandler = new HandleAddPerson();
 	}
 	
 	@Test
 	public void adds_person_to_contact_list() {
-		AddPersonToContactList command = new AddPersonToContactList(MAX_MUSTERMANN);
-		PersonAddedToContactList expectedEvent = new PersonAddedToContactList(MAX_MUSTERMANN);
+		AddPerson command = new AddPerson(MAX_MUSTERMANN);
+		PersonAdded expectedEvent = new PersonAdded(MAX_MUSTERMANN);
 
 		Object actualEvent = commandHandler.apply(command);
 		assertEquals(expectedEvent, actualEvent);
@@ -31,8 +31,8 @@ public class HandleAddPersonToContactListTest {
 	
 	@Test
 	public void adds_different_person_to_contact_list() {
-		AddPersonToContactList command = new AddPersonToContactList(BERTIL_MUTH);
-		PersonAddedToContactList expectedEvent = new PersonAddedToContactList(BERTIL_MUTH);
+		AddPerson command = new AddPerson(BERTIL_MUTH);
+		PersonAdded expectedEvent = new PersonAdded(BERTIL_MUTH);
 
 		Object actualEvent = commandHandler.apply(command);
 		assertEquals(expectedEvent, actualEvent);

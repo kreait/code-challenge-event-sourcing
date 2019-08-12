@@ -1,9 +1,9 @@
 package contactsapp.command;
 
-public class AddPersonToContactList {
+public class AddPerson {
 	private String personName;
 
-	public AddPersonToContactList(String personName) {
+	public AddPerson(String personName) {
 		this.personName = personName;
 	}
 
