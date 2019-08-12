@@ -42,32 +42,28 @@ public class ContactListBoundaryTest {
 	
 	@Test
 	public void adds_person_to_contact_list() {
-		ContactList contactList = addPerson(BERTIL_MUTH, contactListBoundary);
-		List<Contact> contacts = contactList.getContacts();
+		List<Contact> contacts = addPerson(BERTIL_MUTH, contactListBoundary);
 		assertEquals(1, contacts.size());
 		assertEquals(BERTIL_MUTH, contacts.get(0).getName());
 	}
 
 	@Test
 	public void adds_different_person_to_contact_list() {
-		ContactList contactList = addPerson(MAX_MUSTERMANN, contactListBoundary);
-		List<Contact> contacts = contactList.getContacts();
+		List<Contact> contacts = addPerson(MAX_MUSTERMANN, contactListBoundary);
 		assertEquals(1, contacts.size());
 		assertEquals(MAX_MUSTERMANN, contacts.get(0).getName());
 	}
 	
 	@Test
 	public void adds_company_to_contact_list() {
-		ContactList contactList = addCompany(FOO_COM, contactListBoundary);
-		List<Contact> contacts = contactList.getContacts();
+		List<Contact> contacts = addCompany(FOO_COM, contactListBoundary);
 		assertEquals(1, contacts.size());
 		assertEquals(FOO_COM, contacts.get(0).getName());
 	}
 	
 	@Test
 	public void adds_different_company_to_contact_list() {
-		ContactList contactList = addCompany(BAR_COM, contactListBoundary);
-		List<Contact> contacts = contactList.getContacts();
+		List<Contact> contacts = addCompany(BAR_COM, contactListBoundary);
 		assertEquals(1, contacts.size());
 		assertEquals(BAR_COM, contacts.get(0).getName());
 	}
@@ -119,17 +115,21 @@ public class ContactListBoundaryTest {
 		Thread.sleep(0,1);
 	}
 	
-	private ContactList addPerson(String personName, ContactListBoundary boundary) { 
+	private List<Contact> addPerson(String personName, ContactListBoundary boundary) { 
 		AddPerson command = new AddPerson(personName);
 		boundary.reactToCommand(command);
-		ContactList contactList = contactListBoundary.getContactList();
-		return contactList;
+		List<Contact> contacts = findContacts();
+		return contacts;
 	}
 
-	private ContactList addCompany(String companyName, ContactListBoundary boundary) { 
+	private List<Contact> addCompany(String companyName, ContactListBoundary boundary) { 
 		AddCompany command = new AddCompany(companyName);
 		boundary.reactToCommand(command);
-		ContactList contactList = contactListBoundary.getContactList();
-		return contactList;
+		List<Contact> contacts = findContacts();
+		return contacts;
+	}
+
+	private List<Contact> findContacts() {
+		return contactListBoundary.getContactList().getContacts();
 	}
 }
