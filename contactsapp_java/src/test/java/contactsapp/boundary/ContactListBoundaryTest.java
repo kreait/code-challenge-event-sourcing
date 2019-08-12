@@ -3,6 +3,7 @@ package contactsapp.boundary;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.junit.Before;
@@ -93,6 +94,28 @@ public class ContactListBoundaryTest {
 		assertEquals(2, contacts.size());
 		assertEquals(MAX_MUSTERMANN, contacts.get(0).getName());
 		assertEquals(BAR_COM, contacts.get(1).getName());
+	}
+	
+	@Test
+	public void replays_until_after_first_event() throws InterruptedException {
+		addPerson(MAX_MUSTERMANN, contactListBoundary);
+		
+		Instant afterFirstEvent = Instant.now();
+		waitNanoSecond();
+		
+		addCompany(BAR_COM, contactListBoundary);
+		
+		ContactListBoundary newContactListBoundary = new ContactListBoundary(testEventStore);
+		testEventStore.addSubscriber(newContactListBoundary::reactToEvent);
+		testEventStore.replayUntil(afterFirstEvent);
+		
+		List<Contact> contacts = newContactListBoundary.getContactList().getContacts();
+		assertEquals(1, contacts.size());
+		assertEquals(MAX_MUSTERMANN, contacts.get(0).getName());
+	}
+
+	private void waitNanoSecond() throws InterruptedException {
+		Thread.sleep(0,1);
 	}
 	
 	private ContactList addPerson(String personName, ContactListBoundary boundary) { 

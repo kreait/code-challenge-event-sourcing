@@ -1,8 +1,11 @@
 package contactsapp.boundary;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
+import contactsapp.boundary.internal.event.BoundaryInternalEvent;
 
 public class TestEventStore implements Consumer<Object> {
 	private List<Object> storedEvents;
@@ -21,6 +24,23 @@ public class TestEventStore implements Consumer<Object> {
 		for (Object storedEvent : storedEvents) {
 			notifySubscribers(storedEvent);
 		}
+	}
+	
+	public void replayUntil(Instant instant) {
+		for (Object storedEvent : storedEvents) {
+			if(eventHappenedUntil(storedEvent, instant)) {
+				notifySubscribers(storedEvent);
+			}
+		}
+	}
+
+	private boolean eventHappenedUntil(Object storedEvent, Instant instant) {
+		if(!(storedEvent instanceof BoundaryInternalEvent)) {
+			return true;
+		}
+		
+		BoundaryInternalEvent boundaryInternalEvent = (BoundaryInternalEvent) storedEvent;
+		return !boundaryInternalEvent.getTimestamp().isAfter(instant);
 	}
 
 	@Override
