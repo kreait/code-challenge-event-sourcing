@@ -10,9 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import contactsapp.boundary.internal.domain.Contact;
-import contactsapp.boundary.internal.domain.ContactList;
 import contactsapp.command.AddCompany;
 import contactsapp.command.AddPerson;
+import contactsapp.query.FindContacts;
 import eventstore.EventStore;
 
 public class ContactListBoundaryTest {
@@ -36,8 +36,8 @@ public class ContactListBoundaryTest {
 	
 	@Test
 	public void contact_list_is_empty() {
-		ContactList contactList = contactListBoundary.getContactList();
-		assertTrue(contactList.getContacts().isEmpty());
+		List<Contact> contacts = findContacts(contactListBoundary);
+		assertTrue(contacts.isEmpty());
 	}
 	
 	@Test
@@ -74,7 +74,7 @@ public class ContactListBoundaryTest {
 		testEventStore.addSubscriber(newContactListBoundary::reactToEvent);
 		testEventStore.replay();
 		
-		List<Contact> contacts = newContactListBoundary.getContactList().getContacts();
+		List<Contact> contacts = findContacts(newContactListBoundary);
 		assertTrue(contacts.isEmpty());
 	}
 	
@@ -87,10 +87,10 @@ public class ContactListBoundaryTest {
 		testEventStore.addSubscriber(newContactListBoundary::reactToEvent);
 		testEventStore.replay();
 		
-		List<Contact> contacts = newContactListBoundary.getContactList().getContacts();
-		assertEquals(2, contacts.size());
-		assertEquals(MAX_MUSTERMANN, contacts.get(0).getName());
-		assertEquals(BAR_COM, contacts.get(1).getName());
+		List<Contact> newContacts = findContacts(newContactListBoundary);
+		assertEquals(2, newContacts.size());
+		assertEquals(MAX_MUSTERMANN, newContacts.get(0).getName());
+		assertEquals(BAR_COM, newContacts.get(1).getName());
 	}
 	
 	@Test
@@ -106,30 +106,32 @@ public class ContactListBoundaryTest {
 		testEventStore.addSubscriber(newContactListBoundary::reactToEvent);
 		testEventStore.replayUntil(afterFirstEvent);
 		
-		List<Contact> contacts = newContactListBoundary.getContactList().getContacts();
-		assertEquals(1, contacts.size());
-		assertEquals(MAX_MUSTERMANN, contacts.get(0).getName());
+		List<Contact> newContacts = findContacts(newContactListBoundary);
+		assertEquals(1, newContacts.size());
+		assertEquals(MAX_MUSTERMANN, newContacts.get(0).getName());
 	}
 
 	private void waitNanoSecond() throws InterruptedException {
 		Thread.sleep(0,1);
 	}
 	
-	private List<Contact> addPerson(String personName, ContactListBoundary boundary) { 
+	private List<Contact> addPerson(String personName, ContactListBoundary boundary) {
 		AddPerson command = new AddPerson(personName);
 		boundary.reactToCommand(command);
-		List<Contact> contacts = findContacts();
+		List<Contact> contacts = findContacts(boundary);
 		return contacts;
 	}
 
-	private List<Contact> addCompany(String companyName, ContactListBoundary boundary) { 
+	private List<Contact> addCompany(String companyName, ContactListBoundary boundary) {
 		AddCompany command = new AddCompany(companyName);
 		boundary.reactToCommand(command);
-		List<Contact> contacts = findContacts();
+		List<Contact> contacts = findContacts(boundary);
 		return contacts;
 	}
 
-	private List<Contact> findContacts() {
-		return contactListBoundary.getContactList().getContacts();
+	private List<Contact> findContacts(ContactListBoundary boundary) {
+		@SuppressWarnings("unchecked")
+		List<Contact> contacts = (List<Contact>) boundary.reactToQuery(new FindContacts()).get();
+		return contacts;
 	}
 }

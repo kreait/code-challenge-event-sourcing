@@ -1,5 +1,6 @@
 package contactsapp.boundary;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.requirementsascode.Model;
@@ -14,6 +15,7 @@ import contactsapp.boundary.internal.event_handler.HandleCompanyAdded;
 import contactsapp.boundary.internal.event_handler.HandlePersonAdded;
 import contactsapp.command.AddCompany;
 import contactsapp.command.AddPerson;
+import contactsapp.query.FindContacts;
 
 /**
  * The boundary class is the only point of communication with the outside world.
@@ -30,11 +32,13 @@ public class ContactListBoundary {
 
 	private ModelRunner commandHandlingModelRunner;
 	private ModelRunner eventHandlingModelRunner;
+	private ModelRunner queryHandlingModelRunner;
 
 	public ContactListBoundary(Consumer<Object> eventPublisher) {
 		this.contactList = new ContactList();
 		this.commandHandlingModelRunner = new ModelRunner().publishWith(eventPublisher).run(commandHandlingModel());
 		this.eventHandlingModelRunner = new ModelRunner().run(eventHandlingModel());
+		this.queryHandlingModelRunner = new ModelRunner().run(queryHandlingModel());
 	}
 
 	/**
@@ -65,28 +69,49 @@ public class ContactListBoundary {
 
 		return model;
 	}
+	
+	/**
+	 * Builds a model that ties queries to query handlers.
+	 * 
+	 * @return the model that has been built
+	 */
+	private Model queryHandlingModel() {
+		Model model = Model.builder()
+			.user(FindContacts.class).systemPublish(new HandleFindContacts(contactList))
+		.build();
+		
+		return model;
+	}
 
 	/**
 	 * Reacts to the specified command object by sending it to its command handler,
 	 * if there is one.
 	 * 
-	 * @param commandObject the command to send
+	 * @param command the command to send
 	 */
-	public void reactToCommand(Object commandObject) {
-		commandHandlingModelRunner.reactTo(commandObject);
+	public void reactToCommand(Object command) {
+		commandHandlingModelRunner.reactTo(command);
 	}
 
 	/**
 	 * Reacts to the specified event by sending it to its event handler,
 	 * if there is one.
 	 * 
-	 * @param eventObject the event to send
+	 * @param event the event to send
 	 */
-	public void reactToEvent(Object eventObject) {
-		eventHandlingModelRunner.reactTo(eventObject);
+	public void reactToEvent(Object event) {
+		eventHandlingModelRunner.reactTo(event);
 	}
-
-	ContactList getContactList() {
-		return contactList;
+	
+	/**
+	 * Performs the specified query by sending it to its query handler,
+	 * if there is one. If the query handler returns an object,
+	 * that is returned
+	 * 
+	 * @param query the query to send
+	 * @return the query result, or else an empty optional.
+	 */
+	public Optional<Object> reactToQuery(Object query) {
+		return queryHandlingModelRunner.reactTo(query);
 	}
 }
