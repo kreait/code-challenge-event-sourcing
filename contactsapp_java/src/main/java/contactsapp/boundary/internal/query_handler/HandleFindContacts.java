@@ -1,4 +1,4 @@
-package contactsapp.boundary;
+package contactsapp.boundary.internal.query_handler;
 
 import java.util.function.Function;
 

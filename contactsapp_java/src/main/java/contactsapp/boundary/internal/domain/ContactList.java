@@ -4,33 +4,39 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public class ContactList{
+public class ContactList {
 	private List<Contact> contacts;
 
 	public ContactList() {
 		this.contacts = new ArrayList<>();
 	}
-	
+
 	public boolean existsContact(String contactId) {
 		boolean existsContact = contacts.stream().filter(c -> c.getId().equals(contactId)).findFirst().isPresent();
 		return existsContact;
 	}
-	
-	public void addPerson(String personName) {
-		Person person = new Person(personName);
+
+	public String newContactId() {
+		UUID uuid = UUID.randomUUID();
+		String randomUUIDString = uuid.toString();
+		return randomUUIDString;
+	}
+
+	public void addPerson(String id, String personName) {
+		Person person = new Person(id, personName);
 		contacts.add(person);
 	}
-	
-	public void addCompany(String companyName) {
-		Company company = new Company(companyName);
+
+	public void addCompany(String id, String companyName) {
+		Company company = new Company(id, companyName);
 		contacts.add(company);
 	}
-	
+
 	public void renameContact(String contactId, String newName) {
-		Optional<Contact> existingContact = contacts.stream()
-			.filter(contact -> contact.getId().equals(contactId))
-			.findFirst();
+		Optional<Contact> existingContact = contacts.stream().filter(contact -> contact.getId().equals(contactId))
+				.findFirst();
 		existingContact.ifPresent(c -> c.setName(newName));
 	}
 

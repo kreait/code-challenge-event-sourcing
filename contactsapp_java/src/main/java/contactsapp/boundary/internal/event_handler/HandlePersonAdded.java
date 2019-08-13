@@ -14,8 +14,9 @@ public class HandlePersonAdded implements Consumer<PersonAdded> {
 	
 	@Override
 	public void accept(PersonAdded event) {
+		String personId = event.getPersonId();
 		String personName = event.getPersonName();
-		contactList.addPerson(personName);
+		contactList.addPerson(personId, personName);
 	}
 
 }

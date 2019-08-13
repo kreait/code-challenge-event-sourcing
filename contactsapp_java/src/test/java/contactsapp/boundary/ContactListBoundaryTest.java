@@ -11,7 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import contactsapp.boundary.internal.domain.Contact;
+import contactsapp.boundary.internal.event.CompanyAdded;
 import contactsapp.boundary.internal.event.MissingContact;
+import contactsapp.boundary.internal.event.PersonAdded;
 import contactsapp.command.AddCompany;
 import contactsapp.command.AddPerson;
 import contactsapp.command.RenameContact;
@@ -38,43 +40,29 @@ public class ContactListBoundaryTest {
 	}
 
 	@Test
-	public void contact_list_is_empty() {
+	public void contact_list_is_initially_empty() {
 		List<Contact> contacts = findContacts(contactListBoundary);
 		assertTrue(contacts.isEmpty());
 	}
 
 	@Test
-	public void adds_person_to_contact_list() {
-		List<Contact> contacts = addPerson(BERTIL_MUTH, contactListBoundary);
-		assertEquals(1, contacts.size());
-		assertEquals(BERTIL_MUTH, contacts.get(0).getName());
+	public void adds_person() {
+		PersonAdded personAdded = addPerson(BERTIL_MUTH, contactListBoundary);		
+		assertEquals(BERTIL_MUTH, personAdded.getPersonName());
 	}
 
 	@Test
-	public void adds_different_person_to_contact_list() {
-		List<Contact> contacts = addPerson(MAX_MUSTERMANN, contactListBoundary);
-		assertEquals(1, contacts.size());
-		assertEquals(MAX_MUSTERMANN, contacts.get(0).getName());
-	}
-
-	@Test
-	public void adds_company_to_contact_list() {
-		List<Contact> contacts = addCompany(FOO_COM, contactListBoundary);
-		assertEquals(1, contacts.size());
-		assertEquals(FOO_COM, contacts.get(0).getName());
-	}
-
-	@Test
-	public void adds_different_company_to_contact_list() {
-		List<Contact> contacts = addCompany(BAR_COM, contactListBoundary);
-		assertEquals(1, contacts.size());
-		assertEquals(BAR_COM, contacts.get(0).getName());
+	public void adds_company() {
+		CompanyAdded companyAdded = addCompany(FOO_COM, contactListBoundary);		
+		assertEquals(FOO_COM, companyAdded.getCompanyName());
 	}
 	
 	@Test
-	public void adds_two_companies_with_the_same_name_to_contact_list() {
+	public void adds_two_companies_with_the_same_name() {
 		addCompany(FOO_COM, contactListBoundary);
-		List<Contact> contacts = addCompany(FOO_COM, contactListBoundary);
+		addCompany(FOO_COM, contactListBoundary);
+		List<Contact> contacts = findContacts(contactListBoundary);
+
 		assertEquals(2, contacts.size());
 		assertEquals(FOO_COM, contacts.get(0).getName());
 		assertEquals(FOO_COM, contacts.get(1).getName());
@@ -83,21 +71,22 @@ public class ContactListBoundaryTest {
 	
 	@Test
 	public void renames_existing_person() {
-		List<Contact> contacts = addPerson(BERTIL_MUTH, contactListBoundary);
-		String contactId = contacts.get(0).getId();
+		PersonAdded personAdded = addPerson(BERTIL_MUTH, contactListBoundary);
+		String contactId = personAdded.getPersonId();
 		List<Contact> newContacts = renameContact(contactId, MAX_MUSTERMANN, contactListBoundary);
+		
 		assertEquals(1, newContacts.size());
-		assertEquals(MAX_MUSTERMANN, contacts.get(0).getName());
+		assertEquals(MAX_MUSTERMANN, newContacts.get(0).getName());
 	}
 
 	@Test
 	public void renames_existing_company() {
-		addCompany("Some other company", contactListBoundary);
-		List<Contact> contacts = addCompany(FOO_COM, contactListBoundary);
-		String contactId = contacts.get(1).getId();
-		List<Contact> newContacts = renameContact(contactId, BAR_COM, contactListBoundary);
-		assertEquals(2, newContacts.size());
-		assertEquals(BAR_COM, contacts.get(1).getName());
+		CompanyAdded companyAdded = addCompany(BAR_COM, contactListBoundary);
+		String contactId = companyAdded.getCompanyId();
+		List<Contact> newContacts = renameContact(contactId, FOO_COM, contactListBoundary);
+		
+		assertEquals(1, newContacts.size());
+		assertEquals(FOO_COM, newContacts.get(0).getName());
 	}
 	
 	@Test
@@ -154,18 +143,16 @@ public class ContactListBoundaryTest {
 		Thread.sleep(0, 1);
 	}
 
-	private List<Contact> addPerson(String personName, ContactListBoundary boundary) {
+	private PersonAdded addPerson(String personName, ContactListBoundary boundary) {
 		AddPerson command = new AddPerson(personName);
-		boundary.reactToCommand(command);
-		List<Contact> contacts = findContacts(boundary);
-		return contacts;
+		PersonAdded personAdded = (PersonAdded)boundary.reactToCommand(command).get();
+		return personAdded;
 	}
 
-	private List<Contact> addCompany(String companyName, ContactListBoundary boundary) {
+	private CompanyAdded addCompany(String companyName, ContactListBoundary boundary) {
 		AddCompany command = new AddCompany(companyName);
-		boundary.reactToCommand(command);
-		List<Contact> contacts = findContacts(boundary);
-		return contacts;
+		CompanyAdded companyAdded = (CompanyAdded)boundary.reactToCommand(command).get();
+		return companyAdded;
 	}
 
 	private List<Contact> renameContact(String contactId, String newName, ContactListBoundary boundary) {

@@ -14,7 +14,8 @@ public class HandleCompanyAdded implements Consumer<CompanyAdded> {
 	
 	@Override
 	public void accept(CompanyAdded event) {
+		String companyId = event.getCompanyId();
 		String companyName = event.getCompanyName();
-		contactList.addCompany(companyName);
+		contactList.addCompany(companyId, companyName);
 	}
 }

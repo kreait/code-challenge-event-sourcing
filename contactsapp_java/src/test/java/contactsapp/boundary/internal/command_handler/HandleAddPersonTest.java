@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import contactsapp.boundary.internal.domain.ContactList;
 import contactsapp.boundary.internal.event.PersonAdded;
 import contactsapp.command.AddPerson;
 
@@ -16,24 +17,23 @@ public class HandleAddPersonTest {
 	
 	@Before
 	public void setup() {
-		commandHandler = new HandleAddPerson();
+		ContactList contactList = new ContactList();
+		commandHandler = new HandleAddPerson(contactList);
 	}
 	
 	@Test
 	public void adds_person_to_contact_list() {
 		AddPerson command = new AddPerson(MAX_MUSTERMANN);
-		PersonAdded expectedEvent = new PersonAdded(MAX_MUSTERMANN);
 
 		PersonAdded actualEvent = (PersonAdded)commandHandler.apply(command);
-		assertEquals(expectedEvent.getPersonName(), actualEvent.getPersonName());
+		assertEquals(MAX_MUSTERMANN, actualEvent.getPersonName());
 	}
 	
 	@Test
 	public void adds_different_person_to_contact_list() {
 		AddPerson command = new AddPerson(BERTIL_MUTH);
-		PersonAdded expectedEvent = new PersonAdded(BERTIL_MUTH);
 
 		PersonAdded actualEvent = (PersonAdded)commandHandler.apply(command);
-		assertEquals(expectedEvent.getPersonName(), actualEvent.getPersonName());
+		assertEquals(BERTIL_MUTH, actualEvent.getPersonName());
 	}
 }

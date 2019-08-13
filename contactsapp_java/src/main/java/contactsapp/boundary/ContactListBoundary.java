@@ -17,6 +17,7 @@ import contactsapp.boundary.internal.event.PersonAdded;
 import contactsapp.boundary.internal.event_handler.HandleCompanyAdded;
 import contactsapp.boundary.internal.event_handler.HandleContactRenamed;
 import contactsapp.boundary.internal.event_handler.HandlePersonAdded;
+import contactsapp.boundary.internal.query_handler.HandleFindContacts;
 import contactsapp.command.AddCompany;
 import contactsapp.command.AddPerson;
 import contactsapp.command.RenameContact;
@@ -53,8 +54,8 @@ public class ContactListBoundary {
 	 */
 	private Model commandHandlingModel() {
 		Model model = Model.builder()
-			.user(AddPerson.class).systemPublish(new HandleAddPerson())
-			.user(AddCompany.class).systemPublish(new HandleAddCompany())
+			.user(AddPerson.class).systemPublish(new HandleAddPerson(contactList))
+			.user(AddCompany.class).systemPublish(new HandleAddCompany(contactList))
 			.user(RenameContact.class).systemPublish(new HandleRenameContact(contactList))
 			.user(MissingContact.class).systemPublish(missingContact -> missingContact) // Just pass missing contacts through
 		.build();

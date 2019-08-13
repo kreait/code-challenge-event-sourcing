@@ -24,8 +24,8 @@ public class HandleRenameContactTest {
 	
 	@Test
 	public void renames_contact() {
-		contactList.addCompany(FOO_COM);
-		String contactId = contactList.getContacts().get(0).getId();
+		String contactId = contactList.newContactId();
+		contactList.addCompany(contactId, FOO_COM);
 		
 		RenameContact command = new RenameContact(contactId, BAR_COM);
 		ContactRenamed expectedEvent = new ContactRenamed(contactId, BAR_COM);

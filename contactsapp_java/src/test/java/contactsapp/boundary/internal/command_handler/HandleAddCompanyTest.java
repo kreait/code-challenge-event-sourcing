@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import contactsapp.boundary.internal.domain.ContactList;
 import contactsapp.boundary.internal.event.CompanyAdded;
 import contactsapp.command.AddCompany;
 
@@ -16,24 +17,23 @@ public class HandleAddCompanyTest {
 	
 	@Before
 	public void setup() {
-		commandHandler = new HandleAddCompany();
+		ContactList contactList = new ContactList();
+		commandHandler = new HandleAddCompany(contactList);
 	}
 	
 	@Test
 	public void adds_company_to_contact_list() {
 		AddCompany command = new AddCompany(FOO_COM);
-		CompanyAdded expectedEvent = new CompanyAdded(FOO_COM);
 
 		CompanyAdded actualEvent = (CompanyAdded)commandHandler.apply(command);
-		assertEquals(expectedEvent.getCompanyName(), actualEvent.getCompanyName());
+		assertEquals(FOO_COM, actualEvent.getCompanyName());
 	}
 	
 	@Test
 	public void adds_different_company_to_contact_list() {
 		AddCompany command = new AddCompany(BAR_COM);
-		CompanyAdded expectedEvent = new CompanyAdded(BAR_COM);
 
 		CompanyAdded actualEvent = (CompanyAdded)commandHandler.apply(command);
-		assertEquals(expectedEvent.getCompanyName(), actualEvent.getCompanyName());
+		assertEquals(BAR_COM, actualEvent.getCompanyName());
 	}
 }
