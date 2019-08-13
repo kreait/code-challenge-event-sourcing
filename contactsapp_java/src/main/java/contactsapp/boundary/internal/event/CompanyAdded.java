@@ -8,11 +8,7 @@ public class CompanyAdded extends TimestampedEvent{
 	private String companyName;
 
 	public CompanyAdded(String companyName) {
-		this(Instant.now(), companyName);
-	}
-	
-	public CompanyAdded(Instant timestamp, String companyName) {
-		super(timestamp);
+		super(Instant.now());
 		this.companyName = companyName;
 	}
 

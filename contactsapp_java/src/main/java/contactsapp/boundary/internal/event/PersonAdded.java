@@ -8,11 +8,7 @@ public class PersonAdded extends TimestampedEvent{
 	private String personName;
 	
 	public PersonAdded(String personName) {
-		this(Instant.now(), personName);
-	}
-
-	public PersonAdded(Instant timestamp, String personName) {
-		super(timestamp);
+		super(Instant.now());
 		this.personName = personName;
 	}
 

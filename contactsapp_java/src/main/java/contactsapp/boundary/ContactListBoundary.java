@@ -8,13 +8,17 @@ import org.requirementsascode.ModelRunner;
 
 import contactsapp.boundary.internal.command_handler.HandleAddCompany;
 import contactsapp.boundary.internal.command_handler.HandleAddPerson;
+import contactsapp.boundary.internal.command_handler.HandleRenameContact;
 import contactsapp.boundary.internal.domain.ContactList;
 import contactsapp.boundary.internal.event.CompanyAdded;
+import contactsapp.boundary.internal.event.ContactRenamed;
 import contactsapp.boundary.internal.event.PersonAdded;
 import contactsapp.boundary.internal.event_handler.HandleCompanyAdded;
+import contactsapp.boundary.internal.event_handler.HandleContactRenamed;
 import contactsapp.boundary.internal.event_handler.HandlePersonAdded;
 import contactsapp.command.AddCompany;
 import contactsapp.command.AddPerson;
+import contactsapp.command.RenameContact;
 import contactsapp.query.FindContacts;
 
 /**
@@ -50,6 +54,7 @@ public class ContactListBoundary {
 		Model model = Model.builder()
 			.user(AddPerson.class).systemPublish(new HandleAddPerson())
 			.user(AddCompany.class).systemPublish(new HandleAddCompany())
+			.user(RenameContact.class).systemPublish(new HandleRenameContact())
 		.build();
 		
 		return model;
@@ -65,6 +70,7 @@ public class ContactListBoundary {
 		Model model = Model.builder()
 			.on(PersonAdded.class).system(new HandlePersonAdded(contactList))
 			.on(CompanyAdded.class).system(new HandleCompanyAdded(contactList))
+			.on(ContactRenamed.class).system(new HandleContactRenamed(contactList))
 		.build();
 
 		return model;
