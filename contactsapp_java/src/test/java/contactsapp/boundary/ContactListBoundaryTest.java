@@ -21,11 +21,9 @@ import contactsapp.query.FindContacts;
 import eventstore.EventStore;
 
 public class ContactListBoundaryTest {
-	// Person names
 	private static final String MAX_MUSTERMANN = "Max Mustermann";
 	private static final String BERTIL_MUTH = "Bertil Muth";
 
-	// Company names
 	private static final String FOO_COM = "Foo.com";
 	private static final String BAR_COM = "Bar.com";
 
