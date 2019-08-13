@@ -9,7 +9,6 @@ import contactsapp.boundary.internal.event.PersonAdded;
 import contactsapp.command.AddPerson;
 
 public class HandleAddPersonTest {
-	// Person names
 	private static final String MAX_MUSTERMANN = "Max Mustermann";
 	private static final String BERTIL_MUTH = "Bertil Muth";
 	
@@ -25,8 +24,8 @@ public class HandleAddPersonTest {
 		AddPerson command = new AddPerson(MAX_MUSTERMANN);
 		PersonAdded expectedEvent = new PersonAdded(MAX_MUSTERMANN);
 
-		Object actualEvent = commandHandler.apply(command);
-		assertEquals(expectedEvent, actualEvent);
+		PersonAdded actualEvent = (PersonAdded)commandHandler.apply(command);
+		assertEquals(expectedEvent.getPersonName(), actualEvent.getPersonName());
 	}
 	
 	@Test
@@ -34,7 +33,7 @@ public class HandleAddPersonTest {
 		AddPerson command = new AddPerson(BERTIL_MUTH);
 		PersonAdded expectedEvent = new PersonAdded(BERTIL_MUTH);
 
-		Object actualEvent = commandHandler.apply(command);
-		assertEquals(expectedEvent, actualEvent);
+		PersonAdded actualEvent = (PersonAdded)commandHandler.apply(command);
+		assertEquals(expectedEvent.getPersonName(), actualEvent.getPersonName());
 	}
 }

@@ -7,9 +7,11 @@ import org.junit.runners.Suite.SuiteClasses;
 import contactsapp.boundary.ContactListBoundaryTest;
 import contactsapp.boundary.internal.command_handler.HandleAddCompanyTest;
 import contactsapp.boundary.internal.command_handler.HandleAddPersonTest;
+import contactsapp.boundary.internal.command_handler.HandleRenameContactTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({ HandleAddCompanyTest.class, HandleAddPersonTest.class, ContactListBoundaryTest.class })
+@SuiteClasses({ HandleAddCompanyTest.class, HandleAddPersonTest.class, HandleRenameContactTest.class,
+		ContactListBoundaryTest.class })
 public class AllTests {
 
 }

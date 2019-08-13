@@ -9,7 +9,6 @@ import contactsapp.boundary.internal.event.CompanyAdded;
 import contactsapp.command.AddCompany;
 
 public class HandleAddCompanyTest {
-	// Company names
 	private static final String FOO_COM = "Foo.com";
 	private static final String BAR_COM = "Bar.com";
 	
@@ -25,8 +24,8 @@ public class HandleAddCompanyTest {
 		AddCompany command = new AddCompany(FOO_COM);
 		CompanyAdded expectedEvent = new CompanyAdded(FOO_COM);
 
-		Object actualEvent = commandHandler.apply(command);
-		assertEquals(expectedEvent, actualEvent);
+		CompanyAdded actualEvent = (CompanyAdded)commandHandler.apply(command);
+		assertEquals(expectedEvent.getCompanyName(), actualEvent.getCompanyName());
 	}
 	
 	@Test
@@ -34,7 +33,7 @@ public class HandleAddCompanyTest {
 		AddCompany command = new AddCompany(BAR_COM);
 		CompanyAdded expectedEvent = new CompanyAdded(BAR_COM);
 
-		Object actualEvent = commandHandler.apply(command);
-		assertEquals(expectedEvent, actualEvent);
+		CompanyAdded actualEvent = (CompanyAdded)commandHandler.apply(command);
+		assertEquals(expectedEvent.getCompanyName(), actualEvent.getCompanyName());
 	}
 }
