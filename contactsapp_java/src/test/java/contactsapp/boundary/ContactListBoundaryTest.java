@@ -68,6 +68,15 @@ public class ContactListBoundaryTest {
 		assertEquals(1, contacts.size());
 		assertEquals(BAR_COM, contacts.get(0).getName());
 	}
+	
+	@Test
+	public void renames_existing_person() {
+		List<Contact> contacts = addPerson(BERTIL_MUTH, contactListBoundary);
+		String contactId = contacts.get(0).getId();
+		List<Contact> newContacts = renameContact(contactId, MAX_MUSTERMANN, contactListBoundary);
+		assertEquals(1, newContacts.size());
+		assertEquals(MAX_MUSTERMANN, contacts.get(0).getName());
+	}
 
 	@Test
 	public void renames_existing_company() {
