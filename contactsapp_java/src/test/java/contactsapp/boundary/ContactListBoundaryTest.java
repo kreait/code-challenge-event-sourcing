@@ -1,6 +1,8 @@
 package contactsapp.boundary;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Instant;
@@ -70,6 +72,16 @@ public class ContactListBoundaryTest {
 	}
 	
 	@Test
+	public void adds_two_companies_with_the_same_name_to_contact_list() {
+		addCompany(FOO_COM, contactListBoundary);
+		List<Contact> contacts = addCompany(FOO_COM, contactListBoundary);
+		assertEquals(2, contacts.size());
+		assertEquals(FOO_COM, contacts.get(0).getName());
+		assertEquals(FOO_COM, contacts.get(1).getName());
+		assertFalse(contacts.get(0).getId().equals(contacts.get(1).getId()));
+	}
+	
+	@Test
 	public void renames_existing_person() {
 		List<Contact> contacts = addPerson(BERTIL_MUTH, contactListBoundary);
 		String contactId = contacts.get(0).getId();
@@ -80,11 +92,19 @@ public class ContactListBoundaryTest {
 
 	@Test
 	public void renames_existing_company() {
+		addCompany("Some other company", contactListBoundary);
 		List<Contact> contacts = addCompany(FOO_COM, contactListBoundary);
-		String contactId = contacts.get(0).getId();
+		String contactId = contacts.get(1).getId();
 		List<Contact> newContacts = renameContact(contactId, BAR_COM, contactListBoundary);
-		assertEquals(1, newContacts.size());
-		assertEquals(BAR_COM, contacts.get(0).getName());
+		assertEquals(2, newContacts.size());
+		assertEquals(BAR_COM, contacts.get(1).getName());
+	}
+	
+	@Test
+	public void renaming_non_existing_company_fails() {
+		String invalidContactId = "INVALUD_CONTACT_ID";
+		List<Contact> newContacts = renameContact(invalidContactId, BAR_COM, contactListBoundary);
+		assertTrue(newContacts.isEmpty());
 	}
 
 	@Test
