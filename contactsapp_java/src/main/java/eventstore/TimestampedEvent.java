@@ -1,11 +1,11 @@
-package contactsapp.boundary.internal.event;
+package eventstore;
 
 import java.time.Instant;
 
-public class BoundaryInternalEvent {
+public class TimestampedEvent {
 	private Instant timestamp;
 
-	public BoundaryInternalEvent(Instant timestamp) {
+	public TimestampedEvent(Instant timestamp) {
 		this.timestamp = timestamp;
 	}
 

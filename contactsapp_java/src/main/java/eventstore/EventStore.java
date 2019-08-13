@@ -2,13 +2,13 @@ package eventstore;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
-
-import contactsapp.boundary.internal.event.BoundaryInternalEvent;
+import java.util.function.Predicate;
 
 public class EventStore implements Consumer<Object> {
-	private List<Object> storedEvents;
+	private List<TimestampedEvent> storedEvents;
 	private List<Consumer<Object>> subscribers;
 	
 	public EventStore() {
@@ -21,35 +21,40 @@ public class EventStore implements Consumer<Object> {
 	}
 	
 	public void replay() {
-		for (Object storedEvent : storedEvents) {
-			notifySubscribers(storedEvent);
-		}
+		replayUntilConditionFalse(event -> true);
 	}
 	
 	public void replayUntil(Instant instant) {
-		for (Object storedEvent : storedEvents) {
-			if(eventHappenedUntil(storedEvent, instant)) {
-				notifySubscribers(storedEvent);
+		replayUntilConditionFalse(event -> eventHappenedUntil(event, instant));
+	}
+	
+	private void replayUntilConditionFalse(Predicate<TimestampedEvent> condition) {
+		storedEvents.sort(Comparator.comparing(TimestampedEvent::getTimestamp));
+		
+		for (TimestampedEvent storedEvent : storedEvents) {
+			if(!condition.test(storedEvent)) {
+				break;
 			}
+			notifySubscribers(storedEvent);
 		}
 	}
 
-	private boolean eventHappenedUntil(Object storedEvent, Instant instant) {
-		if(!(storedEvent instanceof BoundaryInternalEvent)) {
-			return true;
-		}
-		
-		BoundaryInternalEvent boundaryInternalEvent = (BoundaryInternalEvent) storedEvent;
-		return !boundaryInternalEvent.getTimestamp().isAfter(instant);
+	private boolean eventHappenedUntil(TimestampedEvent storedEvent, Instant instant) {
+		return !storedEvent.getTimestamp().isAfter(instant);
 	}
 
 	@Override
 	public void accept(Object event) {
-		storeEvent(event);
-		notifySubscribers(event);
+		if(!(event instanceof TimestampedEvent)) {
+			throw new IllegalArgumentException("This event store only accepts TimestampedEvent instances!");
+		}
+		
+		TimestampedEvent timestampedEvent = (TimestampedEvent)event;
+		storeEvent(timestampedEvent);
+		notifySubscribers(timestampedEvent);
 	}
 
-	private void storeEvent(Object event) {
+	private void storeEvent(TimestampedEvent event) {
 		storedEvents.add(event);
 	}
 	

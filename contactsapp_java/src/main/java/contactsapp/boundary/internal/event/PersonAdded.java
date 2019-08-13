@@ -2,7 +2,9 @@ package contactsapp.boundary.internal.event;
 
 import java.time.Instant;
 
-public class PersonAdded extends BoundaryInternalEvent{
+import eventstore.TimestampedEvent;
+
+public class PersonAdded extends TimestampedEvent{
 	private String personName;
 	
 	public PersonAdded(String personName) {
