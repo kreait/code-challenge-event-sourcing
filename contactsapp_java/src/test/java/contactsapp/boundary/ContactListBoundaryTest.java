@@ -2,7 +2,6 @@ package contactsapp.boundary;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Instant;
@@ -12,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import contactsapp.boundary.internal.domain.Contact;
+import contactsapp.boundary.internal.event.MissingContact;
 import contactsapp.command.AddCompany;
 import contactsapp.command.AddPerson;
 import contactsapp.command.RenameContact;
@@ -102,9 +102,9 @@ public class ContactListBoundaryTest {
 	
 	@Test
 	public void renaming_non_existing_company_fails() {
-		String invalidContactId = "INVALUD_CONTACT_ID";
-		List<Contact> newContacts = renameContact(invalidContactId, BAR_COM, contactListBoundary);
-		assertTrue(newContacts.isEmpty());
+		String invalidContactId = "INVALID_CONTACT_ID";
+		MissingContact missingContact = renameInvalidContact(invalidContactId, BAR_COM, contactListBoundary);
+		assertEquals(invalidContactId, missingContact.getContactId());
 	}
 
 	@Test
@@ -173,6 +173,12 @@ public class ContactListBoundaryTest {
 		boundary.reactToCommand(command);
 		List<Contact> contacts = findContacts(boundary);
 		return contacts;
+	}
+	
+	private MissingContact renameInvalidContact(String contactId, String newName, ContactListBoundary boundary) {
+		RenameContact command = new RenameContact(contactId, newName);
+		MissingContact missingContact = (MissingContact)boundary.reactToCommand(command).get();
+		return missingContact;
 	}
 
 	private List<Contact> findContacts(ContactListBoundary boundary) {

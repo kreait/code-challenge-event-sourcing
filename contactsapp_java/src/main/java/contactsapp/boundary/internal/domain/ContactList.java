@@ -12,6 +12,11 @@ public class ContactList{
 		this.contacts = new ArrayList<>();
 	}
 	
+	public boolean existsContact(String contactId) {
+		boolean existsContact = contacts.stream().filter(c -> c.getId().equals(contactId)).findFirst().isPresent();
+		return existsContact;
+	}
+	
 	public void addPerson(String personName) {
 		Person person = new Person(personName);
 		contacts.add(person);

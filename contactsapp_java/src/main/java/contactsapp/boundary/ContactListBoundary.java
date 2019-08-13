@@ -12,6 +12,7 @@ import contactsapp.boundary.internal.command_handler.HandleRenameContact;
 import contactsapp.boundary.internal.domain.ContactList;
 import contactsapp.boundary.internal.event.CompanyAdded;
 import contactsapp.boundary.internal.event.ContactRenamed;
+import contactsapp.boundary.internal.event.MissingContact;
 import contactsapp.boundary.internal.event.PersonAdded;
 import contactsapp.boundary.internal.event_handler.HandleCompanyAdded;
 import contactsapp.boundary.internal.event_handler.HandleContactRenamed;
@@ -54,7 +55,8 @@ public class ContactListBoundary {
 		Model model = Model.builder()
 			.user(AddPerson.class).systemPublish(new HandleAddPerson())
 			.user(AddCompany.class).systemPublish(new HandleAddCompany())
-			.user(RenameContact.class).systemPublish(new HandleRenameContact())
+			.user(RenameContact.class).systemPublish(new HandleRenameContact(contactList))
+			.user(MissingContact.class).systemPublish(missingContact -> missingContact) // Just pass missing contacts through
 		.build();
 		
 		return model;
@@ -94,9 +96,10 @@ public class ContactListBoundary {
 	 * if there is one.
 	 * 
 	 * @param command the command to send
+	 * @return an error object if an error occured, else an empty optional
 	 */
-	public void reactToCommand(Object command) {
-		commandHandlingModelRunner.reactTo(command);
+	public Optional<Object> reactToCommand(Object command) {
+		return commandHandlingModelRunner.reactTo(command);
 	}
 
 	/**
