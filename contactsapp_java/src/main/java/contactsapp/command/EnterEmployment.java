@@ -1,14 +1,14 @@
-package contactsapp.boundary.internal.command_handler;
+package contactsapp.command;
 
-public class EmploymentEntered {
+public class EnterEmployment {
 	private String personId;
 	private String companyId;
 
-	public EmploymentEntered(String personId, String companyId) {
+	public EnterEmployment(String personId, String companyId) {
 		this.personId = personId;
 		this.companyId = companyId;
 	}
-
+	
 	public String getPersonId() {
 		return personId;
 	}

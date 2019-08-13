@@ -3,7 +3,9 @@ package contactsapp.boundary.internal.command_handler;
 import java.util.function.Function;
 
 import contactsapp.boundary.internal.domain.ContactList;
+import contactsapp.boundary.internal.event.EmploymentEntered;
 import contactsapp.boundary.internal.event.MissingContact;
+import contactsapp.command.EnterEmployment;
 
 public class HandleEnterEmployment implements Function<EnterEmployment, Object>{
 	private ContactList contactList;

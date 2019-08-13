@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import contactsapp.boundary.internal.domain.ContactList;
+import contactsapp.boundary.internal.event.EmploymentEntered;
+import contactsapp.command.EnterEmployment;
 
 public class HandleEnterEmploymentTest {
 	private static final String BERTIL_MUTH = "Bertil Muth";
