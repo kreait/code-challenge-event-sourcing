@@ -123,10 +123,11 @@ but feel free to adapt them)_
 
 ## Implementations
 
-| Language | Use case | Repository |
+| Language | Use case(s) | Repository |
 | --- | --- | --- |
-|   |   |   |
+| Java | Contacts App | [bertilmuth/code-challenge-event-sourcing](https://github.com/bertilmuth/code-challenge-event-sourcing) |
 
-Create a pull request on this repository to add your implementation.
+Please start your implementation in a fresh repository and fork this repository only 
+for a later pull request to add a link to your implementation to the table above.
 
 Happy coding!
