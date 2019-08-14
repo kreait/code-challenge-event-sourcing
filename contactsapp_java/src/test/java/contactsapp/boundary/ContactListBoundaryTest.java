@@ -12,10 +12,12 @@ import org.junit.Test;
 
 import contactsapp.boundary.internal.domain.Contact;
 import contactsapp.boundary.internal.event.CompanyAdded;
+import contactsapp.boundary.internal.event.EmploymentEntered;
 import contactsapp.boundary.internal.event.MissingContact;
 import contactsapp.boundary.internal.event.PersonAdded;
 import contactsapp.command.AddCompany;
 import contactsapp.command.AddPerson;
+import contactsapp.command.EnterEmployment;
 import contactsapp.command.RenameContact;
 import contactsapp.query.FindContacts;
 import eventstore.EventStore;
@@ -23,6 +25,8 @@ import eventstore.EventStore;
 public class ContactListBoundaryTest {
 	private static final String MAX_MUSTERMANN = "Max Mustermann";
 	private static final String BERTIL_MUTH = "Bertil Muth";
+	
+	private static final String AGILE_COACH = "Agile Coach";
 
 	private static final String FOO_COM = "Foo.com";
 	private static final String BAR_COM = "Bar.com";
@@ -93,6 +97,19 @@ public class ContactListBoundaryTest {
 		MissingContact missingContact = renameInvalidContact(invalidContactId, BAR_COM, contactListBoundary);
 		assertEquals(invalidContactId, missingContact.getContactId());
 	}
+	
+	@Test
+	public void person_enters_employment() {
+		PersonAdded personAdded = addPerson(BERTIL_MUTH, contactListBoundary);
+		CompanyAdded companyAdded = addCompany(BAR_COM, contactListBoundary);
+		String personId = personAdded.getPersonId();
+		String companyId = companyAdded.getCompanyId();
+		
+		EmploymentEntered employmentEntered = enterEmployment(personId, companyId, AGILE_COACH, contactListBoundary);
+		assertEquals(personId, employmentEntered.getPersonId());
+		assertEquals(companyId, employmentEntered.getCompanyId());
+		assertEquals(AGILE_COACH, employmentEntered.getRole());
+	}
 
 	@Test
 	public void replays_zero_events() {
@@ -158,6 +175,12 @@ public class ContactListBoundaryTest {
 		boundary.reactToCommand(command);
 		List<Contact> contacts = findContacts(boundary);
 		return contacts;
+	}
+	
+	private EmploymentEntered enterEmployment(String personId, String companyId, String role, ContactListBoundary boundary) {
+		EnterEmployment command = new EnterEmployment(personId, companyId, role);
+		EmploymentEntered employmentEntered = (EmploymentEntered)boundary.reactToCommand(command).get();
+		return employmentEntered;
 	}
 	
 	private MissingContact renameInvalidContact(String contactId, String newName, ContactListBoundary boundary) {

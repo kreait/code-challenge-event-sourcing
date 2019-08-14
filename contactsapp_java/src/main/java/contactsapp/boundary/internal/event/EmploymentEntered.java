@@ -1,6 +1,8 @@
 package contactsapp.boundary.internal.event;
 
-public class EmploymentEntered {
+import eventstore.TimestampedEvent;
+
+public class EmploymentEntered extends TimestampedEvent{
 	private String personId;
 	private String companyId;
 	private String role;
