@@ -13,11 +13,6 @@ public class ContactList {
 		this.contacts = new ArrayList<>();
 	}
 
-	public boolean existsContact(String contactId) {
-		boolean existsContact = contacts.stream().filter(c -> c.getId().equals(contactId)).findFirst().isPresent();
-		return existsContact;
-	}
-
 	public String newContactId() {
 		UUID uuid = UUID.randomUUID();
 		String randomUUIDString = uuid.toString();
@@ -35,9 +30,19 @@ public class ContactList {
 	}
 
 	public void renameContact(String contactId, String newName) {
-		Optional<Contact> existingContact = contacts.stream().filter(contact -> contact.getId().equals(contactId))
-				.findFirst();
+		Optional<Contact> existingContact = getContact(contactId);
 		existingContact.ifPresent(c -> c.setName(newName));
+	}
+
+	public boolean isContactPresent(String contactId) {
+		Optional<Contact> contact = getContact(contactId);
+		boolean existsContact = contact.isPresent();
+		return existsContact;
+	}
+
+	public Optional<Contact> getContact(String contactId) {
+		Optional<Contact> contact = contacts.stream().filter(c -> c.getId().equals(contactId)).findFirst();
+		return contact;
 	}
 
 	public List<Contact> getContacts() {

@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import contactsapp.boundary.internal.domain.ContactList;
 import contactsapp.boundary.internal.event.EmploymentEntered;
+import contactsapp.boundary.internal.event.MissingContact;
 import contactsapp.command.EnterEmployment;
 
 public class HandleEnterEmploymentTest {
@@ -24,7 +25,7 @@ public class HandleEnterEmploymentTest {
 	}
 	
 	@Test
-	public void person_works_for_company() {
+	public void person_enters_employment() {
 		String personId = contactList.newContactId();
 		String companyId = contactList.newContactId();
 		contactList.addPerson(personId, BERTIL_MUTH);
@@ -35,5 +36,47 @@ public class HandleEnterEmploymentTest {
 		
 		assertEquals(personId, actualEvent.getPersonId());
 		assertEquals(companyId, actualEvent.getCompanyId());
+	}
+	
+	@Test
+	public void employee_isnt_a_person() {
+		String companyId = contactList.newContactId();
+		contactList.addCompany(companyId, FOO_COM);
+		
+		EnterEmployment command = new EnterEmployment(companyId, companyId);
+		ShouldBePerson shouldBePerson = (ShouldBePerson)commandHandler.apply(command);
+		assertEquals(companyId, shouldBePerson.getContactId());
+	}
+	
+	@Test
+	public void company_isnt_a_company() {
+		String personId = contactList.newContactId();
+		contactList.addPerson(personId, BERTIL_MUTH);
+		
+		EnterEmployment command = new EnterEmployment(personId, personId);
+		ShouldBeCompany shouldBeCompany = (ShouldBeCompany)commandHandler.apply(command);
+		assertEquals(personId, shouldBeCompany.getContactId());
+	}
+	
+	@Test
+	public void person_missing() {
+		String companyId = contactList.newContactId();
+		contactList.addCompany(companyId, FOO_COM);
+		String invalidPersonId = "INVALID_PERSON_ID";
+		
+		EnterEmployment command = new EnterEmployment(invalidPersonId, companyId);
+		MissingContact missingContact = (MissingContact)commandHandler.apply(command);
+		assertEquals(invalidPersonId, missingContact.getContactId());
+	}
+	
+	@Test
+	public void company_missing() {
+		String personId = contactList.newContactId();
+		contactList.addPerson(personId, BERTIL_MUTH);
+		String invalidCompanyId = "INVALID_COMPANY_ID";
+		
+		EnterEmployment command = new EnterEmployment(personId, invalidCompanyId);
+		MissingContact missingContact = (MissingContact)commandHandler.apply(command);
+		assertEquals(invalidCompanyId, missingContact.getContactId());
 	}
 }

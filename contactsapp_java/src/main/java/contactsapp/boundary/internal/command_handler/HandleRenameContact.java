@@ -17,7 +17,7 @@ public class HandleRenameContact implements Function<RenameContact, Object> {
 	@Override
 	public Object apply(RenameContact command) {
 		String contactId = command.getContactId();
-		if(!contactList.existsContact(contactId)) {
+		if(!contactList.isContactPresent(contactId)) {
 			return new MissingContact(contactId);
 		}
 			

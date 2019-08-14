@@ -1,7 +1,7 @@
 package contactsapp.boundary.internal.domain;
 
-class Company extends Contact{
-	public Company(String id, String name) {
+public class Company extends Contact{
+	Company(String id, String name) {
 		super(id, name);
 	}
 
