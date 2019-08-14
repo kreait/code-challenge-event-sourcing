@@ -12,6 +12,7 @@ It implements the Contacts List use case.
 The script performs the major steps of the Contacts List use case. The output is:
 
 ```Adding person: John Q. Public
+Adding person: John Q. Public
 Adding company: FooBar Inc.
 Renaming person: John Q. Public to: John Q. Private
 Replaying events...
