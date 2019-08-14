@@ -46,7 +46,8 @@ public class EventStore implements Consumer<Object> {
 	@Override
 	public void accept(Object event) {
 		if(!(event instanceof TimestampedEvent)) {
-			throw new IllegalArgumentException("This event store only accepts TimestampedEvent instances!");
+			// Only timestamped events are forwarded
+			return;
 		}
 		
 		TimestampedEvent timestampedEvent = (TimestampedEvent)event;

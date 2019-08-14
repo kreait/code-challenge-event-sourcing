@@ -1,6 +1,7 @@
 package contactsapp.boundary;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Instant;
@@ -61,9 +62,14 @@ public class ContactListBoundaryTest {
 		CompanyAdded companyAdded = (CompanyAdded) addCompany(FOO_COM, boundary);
 		String companyId = companyAdded.getCompanyId();
 
-		renameContact(companyId, BAR_COM, boundary);
-		Object handledEvent = boundary.getHandledEvent();
+		Object handledEvent = renameContact(companyId, BAR_COM, boundary);
 		assertTrue(handledEvent instanceof ContactRenamed);
+	}
+	
+	@Test
+	public void renaming_missing_contact_fails() throws InterruptedException {
+		Object handledEvent = renameContact(BAR_COM, BAR_COM, boundary);
+		assertNull(handledEvent);
 	}
 	
 	@Test

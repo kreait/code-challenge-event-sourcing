@@ -15,13 +15,13 @@ import contactsapp.boundary.internal.domain.ContactList;
 import contactsapp.boundary.internal.event.CompanyAdded;
 import contactsapp.boundary.internal.event.ContactRenamed;
 import contactsapp.boundary.internal.event.EmploymentEntered;
-import contactsapp.boundary.internal.event.MissingContact;
 import contactsapp.boundary.internal.event.PersonAdded;
 import contactsapp.boundary.internal.event_handler.HandleCompanyAdded;
 import contactsapp.boundary.internal.event_handler.HandleContactRenamed;
 import contactsapp.boundary.internal.event_handler.HandleEmploymentEntered;
 import contactsapp.boundary.internal.event_handler.HandlePersonAdded;
 import contactsapp.boundary.internal.query_handler.HandleFindContacts;
+import contactsapp.boundary.internal.validation.ValidationError;
 import contactsapp.command.AddCompany;
 import contactsapp.command.AddPerson;
 import contactsapp.command.EnterEmployment;
@@ -48,17 +48,22 @@ public class ContactListBoundary {
 	private Object handledEvent;
 
 	public ContactListBoundary(Consumer<Object> eventPublisher) {
-		this.contactList = new ContactList();
-		this.commandHandlingModelRunner = new ModelRunner()
+		contactList = new ContactList();
+		
+		commandHandlingModelRunner = new ModelRunner()
 			.handleWith(this::clearHandledEvent)
 			.publishWith(eventPublisher)
 			.run(commandHandlingModel());
-		this.queryHandlingModelRunner = new ModelRunner().run(queryHandlingModel());
-		this.eventHandlingModelRunner = new ModelRunner()
+		
+		queryHandlingModelRunner = new ModelRunner().run(queryHandlingModel());
+		
+		eventHandlingModelRunner = new ModelRunner()
 				.handleWith(this::saveHandledEvent)
 				.run(eventHandlingModel());
 	}
 
+	// The following three methods serve to find out which event was actually
+	// handled by the event handling model. 
 	private void clearHandledEvent(StepToBeRun stepToBeRun) {
 		handledEvent = null;
 		stepToBeRun.run();
@@ -76,7 +81,7 @@ public class ContactListBoundary {
 	/**
 	 * Builds a model that ties command types to command handlers.
 	 * 
-	 * @return the model that has been built
+	 * @return the model that has been builtO
 	 */
 	private Model commandHandlingModel() {
 		Model model = Model.builder()
@@ -84,7 +89,7 @@ public class ContactListBoundary {
 			.user(AddCompany.class).systemPublish(new HandleAddCompany(contactList))
 			.user(RenameContact.class).systemPublish(new HandleRenameContact(contactList))
 			.user(EnterEmployment.class).systemPublish(new HandleEnterEmployment(contactList))
-			.user(MissingContact.class).systemPublish(missingContact -> missingContact) // Just pass missing contacts through
+			.on(ValidationError.class).systemPublish(err -> err) // Return validation errors
 		.build();
 
 		return model;

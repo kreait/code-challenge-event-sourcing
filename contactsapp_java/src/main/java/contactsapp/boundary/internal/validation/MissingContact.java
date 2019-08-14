@@ -1,8 +1,6 @@
-package contactsapp.boundary.internal.event;
+package contactsapp.boundary.internal.validation;
 
-import eventstore.TimestampedEvent;
-
-public class MissingContact extends TimestampedEvent{
+public class MissingContact implements ValidationError{
 	private String contactId;
 
 	public MissingContact(String contactId) {

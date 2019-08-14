@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import contactsapp.boundary.internal.domain.ContactList;
 import contactsapp.boundary.internal.event.ContactRenamed;
-import contactsapp.boundary.internal.event.MissingContact;
+import contactsapp.boundary.internal.validation.MissingContact;
 import contactsapp.command.RenameContact;
 
 public class HandleRenameContactTest {

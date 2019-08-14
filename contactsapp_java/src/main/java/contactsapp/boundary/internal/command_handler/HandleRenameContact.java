@@ -4,7 +4,7 @@ import java.util.function.Function;
 
 import contactsapp.boundary.internal.domain.ContactList;
 import contactsapp.boundary.internal.event.ContactRenamed;
-import contactsapp.boundary.internal.event.MissingContact;
+import contactsapp.boundary.internal.validation.MissingContact;
 import contactsapp.command.RenameContact;
 
 public class HandleRenameContact implements Function<RenameContact, Object> {

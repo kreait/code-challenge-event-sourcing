@@ -1,6 +1,6 @@
-package contactsapp.boundary.internal.event;
+package contactsapp.boundary.internal.validation;
 
-public class ShouldBePerson {
+public class ShouldBePerson implements ValidationError{
 	private String contactId;
 
 	public ShouldBePerson(String contactId) {
