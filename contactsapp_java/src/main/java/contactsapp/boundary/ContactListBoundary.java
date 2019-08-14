@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 
 import org.requirementsascode.Model;
 import org.requirementsascode.ModelRunner;
+import org.requirementsascode.StepToBeRun;
 
 import contactsapp.boundary.internal.command_handler.HandleAddCompany;
 import contactsapp.boundary.internal.command_handler.HandleAddPerson;
@@ -13,10 +14,12 @@ import contactsapp.boundary.internal.command_handler.HandleRenameContact;
 import contactsapp.boundary.internal.domain.ContactList;
 import contactsapp.boundary.internal.event.CompanyAdded;
 import contactsapp.boundary.internal.event.ContactRenamed;
+import contactsapp.boundary.internal.event.EmploymentEntered;
 import contactsapp.boundary.internal.event.MissingContact;
 import contactsapp.boundary.internal.event.PersonAdded;
 import contactsapp.boundary.internal.event_handler.HandleCompanyAdded;
 import contactsapp.boundary.internal.event_handler.HandleContactRenamed;
+import contactsapp.boundary.internal.event_handler.HandleEmploymentEntered;
 import contactsapp.boundary.internal.event_handler.HandlePersonAdded;
 import contactsapp.boundary.internal.query_handler.HandleFindContacts;
 import contactsapp.command.AddCompany;
@@ -29,8 +32,8 @@ import contactsapp.query.FindContacts;
  * The boundary class is the only point of communication with the outside world.
  * It accepts commands, and calls the appropriate command handler.
  * 
- * The command handler transforms the commands into events.
- * The events are handled by the event publisher specified as constructor argument.
+ * The command handler transforms the commands into events. The events are
+ * handled by the event publisher specified as constructor argument.
  * 
  * @author b_muth
  *
@@ -39,14 +42,35 @@ public class ContactListBoundary {
 	private ContactList contactList;
 
 	private ModelRunner commandHandlingModelRunner;
-	private ModelRunner eventHandlingModelRunner;
 	private ModelRunner queryHandlingModelRunner;
+	private ModelRunner eventHandlingModelRunner;
+
+	private Object handledEvent;
 
 	public ContactListBoundary(Consumer<Object> eventPublisher) {
 		this.contactList = new ContactList();
-		this.commandHandlingModelRunner = new ModelRunner().publishWith(eventPublisher).run(commandHandlingModel());
-		this.eventHandlingModelRunner = new ModelRunner().run(eventHandlingModel());
+		this.commandHandlingModelRunner = new ModelRunner()
+			.handleWith(this::clearHandledEvent)
+			.publishWith(eventPublisher)
+			.run(commandHandlingModel());
 		this.queryHandlingModelRunner = new ModelRunner().run(queryHandlingModel());
+		this.eventHandlingModelRunner = new ModelRunner()
+				.handleWith(this::saveHandledEvent)
+				.run(eventHandlingModel());
+	}
+
+	private void clearHandledEvent(StepToBeRun stepToBeRun) {
+		handledEvent = null;
+		stepToBeRun.run();
+	}
+
+	private void saveHandledEvent(StepToBeRun stepToBeRun) {
+		stepToBeRun.getMessage().ifPresent(event -> handledEvent = event);
+		stepToBeRun.run();
+	}
+
+	public Object getHandledEvent() {
+		return handledEvent;
 	}
 
 	/**
@@ -62,7 +86,7 @@ public class ContactListBoundary {
 			.user(EnterEmployment.class).systemPublish(new HandleEnterEmployment(contactList))
 			.user(MissingContact.class).systemPublish(missingContact -> missingContact) // Just pass missing contacts through
 		.build();
-		
+
 		return model;
 	}
 
@@ -77,11 +101,12 @@ public class ContactListBoundary {
 			.on(PersonAdded.class).system(new HandlePersonAdded(contactList))
 			.on(CompanyAdded.class).system(new HandleCompanyAdded(contactList))
 			.on(ContactRenamed.class).system(new HandleContactRenamed(contactList))
+			.on(EmploymentEntered.class).system(new HandleEmploymentEntered(contactList))
 		.build();
 
 		return model;
 	}
-	
+
 	/**
 	 * Builds a model that ties queries to query handlers.
 	 * 
@@ -91,7 +116,7 @@ public class ContactListBoundary {
 		Model model = Model.builder()
 			.user(FindContacts.class).systemPublish(new HandleFindContacts(contactList))
 		.build();
-		
+
 		return model;
 	}
 
@@ -107,19 +132,18 @@ public class ContactListBoundary {
 	}
 
 	/**
-	 * Reacts to the specified event by sending it to its event handler,
-	 * if there is one.
+	 * Reacts to the specified event by sending it to its event handler, if there is
+	 * one.
 	 * 
 	 * @param event the event to send
 	 */
 	public void reactToEvent(Object event) {
 		eventHandlingModelRunner.reactTo(event);
 	}
-	
+
 	/**
-	 * Performs the specified query by sending it to its query handler,
-	 * if there is one. If the query handler returns an object,
-	 * that is returned
+	 * Performs the specified query by sending it to its query handler, if there is
+	 * one. If the query handler returns an object, that is returned
 	 * 
 	 * @param query the query to send
 	 * @return the query result, or else an empty optional.

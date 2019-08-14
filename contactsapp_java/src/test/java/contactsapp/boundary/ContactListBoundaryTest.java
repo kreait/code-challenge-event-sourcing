@@ -25,7 +25,7 @@ import eventstore.EventStore;
 public class ContactListBoundaryTest {
 	private static final String MAX_MUSTERMANN = "Max Mustermann";
 	private static final String BERTIL_MUTH = "Bertil Muth";
-	
+
 	private static final String AGILE_COACH = "Agile Coach";
 
 	private static final String FOO_COM = "Foo.com";
@@ -49,16 +49,16 @@ public class ContactListBoundaryTest {
 
 	@Test
 	public void adds_person() {
-		PersonAdded personAdded = addPerson(BERTIL_MUTH, contactListBoundary);		
+		PersonAdded personAdded = addPerson(BERTIL_MUTH, contactListBoundary);
 		assertEquals(BERTIL_MUTH, personAdded.getPersonName());
 	}
 
 	@Test
 	public void adds_company() {
-		CompanyAdded companyAdded = addCompany(FOO_COM, contactListBoundary);		
+		CompanyAdded companyAdded = addCompany(FOO_COM, contactListBoundary);
 		assertEquals(FOO_COM, companyAdded.getCompanyName());
 	}
-	
+
 	@Test
 	public void adds_two_companies_with_the_same_name() {
 		addCompany(FOO_COM, contactListBoundary);
@@ -70,13 +70,13 @@ public class ContactListBoundaryTest {
 		assertEquals(FOO_COM, contacts.get(1).getName());
 		assertFalse(contacts.get(0).getId().equals(contacts.get(1).getId()));
 	}
-	
+
 	@Test
 	public void renames_existing_person() {
 		PersonAdded personAdded = addPerson(BERTIL_MUTH, contactListBoundary);
 		String contactId = personAdded.getPersonId();
 		List<Contact> newContacts = renameContact(contactId, MAX_MUSTERMANN, contactListBoundary);
-		
+
 		assertEquals(1, newContacts.size());
 		assertEquals(MAX_MUSTERMANN, newContacts.get(0).getName());
 	}
@@ -86,25 +86,25 @@ public class ContactListBoundaryTest {
 		CompanyAdded companyAdded = addCompany(BAR_COM, contactListBoundary);
 		String contactId = companyAdded.getCompanyId();
 		List<Contact> newContacts = renameContact(contactId, FOO_COM, contactListBoundary);
-		
+
 		assertEquals(1, newContacts.size());
 		assertEquals(FOO_COM, newContacts.get(0).getName());
 	}
-	
+
 	@Test
 	public void renaming_non_existing_company_fails() {
 		String invalidContactId = "INVALID_CONTACT_ID";
 		MissingContact missingContact = renameInvalidContact(invalidContactId, BAR_COM, contactListBoundary);
 		assertEquals(invalidContactId, missingContact.getContactId());
 	}
-	
+
 	@Test
 	public void person_enters_employment() {
 		PersonAdded personAdded = addPerson(BERTIL_MUTH, contactListBoundary);
 		CompanyAdded companyAdded = addCompany(BAR_COM, contactListBoundary);
 		String personId = personAdded.getPersonId();
 		String companyId = companyAdded.getCompanyId();
-		
+
 		EmploymentEntered employmentEntered = enterEmployment(personId, companyId, AGILE_COACH, contactListBoundary);
 		assertEquals(personId, employmentEntered.getPersonId());
 		assertEquals(companyId, employmentEntered.getCompanyId());
@@ -160,13 +160,15 @@ public class ContactListBoundaryTest {
 
 	private PersonAdded addPerson(String personName, ContactListBoundary boundary) {
 		AddPerson command = new AddPerson(personName);
-		PersonAdded personAdded = (PersonAdded)boundary.reactToCommand(command).get();
+		boundary.reactToCommand(command).get();
+		PersonAdded personAdded = (PersonAdded) contactListBoundary.getHandledEvent();
 		return personAdded;
 	}
 
 	private CompanyAdded addCompany(String companyName, ContactListBoundary boundary) {
 		AddCompany command = new AddCompany(companyName);
-		CompanyAdded companyAdded = (CompanyAdded)boundary.reactToCommand(command).get();
+		boundary.reactToCommand(command);
+		CompanyAdded companyAdded = (CompanyAdded)contactListBoundary.getHandledEvent(); 
 		return companyAdded;
 	}
 
@@ -176,16 +178,18 @@ public class ContactListBoundaryTest {
 		List<Contact> contacts = findContacts(boundary);
 		return contacts;
 	}
-	
-	private EmploymentEntered enterEmployment(String personId, String companyId, String role, ContactListBoundary boundary) {
+
+	private EmploymentEntered enterEmployment(String personId, String companyId, String role,
+			ContactListBoundary boundary) {
 		EnterEmployment command = new EnterEmployment(personId, companyId, role);
-		EmploymentEntered employmentEntered = (EmploymentEntered)boundary.reactToCommand(command).get();
+		boundary.reactToCommand(command).get();
+		EmploymentEntered employmentEntered = (EmploymentEntered) contactListBoundary.getHandledEvent(); 
 		return employmentEntered;
 	}
-	
+
 	private MissingContact renameInvalidContact(String contactId, String newName, ContactListBoundary boundary) {
 		RenameContact command = new RenameContact(contactId, newName);
-		MissingContact missingContact = (MissingContact)boundary.reactToCommand(command).get();
+		MissingContact missingContact = (MissingContact) boundary.reactToCommand(command).get();
 		return missingContact;
 	}
 
