@@ -31,7 +31,14 @@ public class ContactList {
 
 	public void renameContact(String contactId, String newName) {
 		Optional<Contact> existingContact = getContact(contactId);
-		existingContact.ifPresent(c -> c.setName(newName));
+		existingContact.get().setName(newName);
+	}
+
+	public void enterEmployment(String personId, String companyId, String role) {
+		Person person = (Person) getContact(personId).get();
+		Company company = (Company) getContact(companyId).get();
+		Employment employment = new Employment(person, company, role);
+		person.setEmployment(employment);
 	}
 
 	public boolean isContactPresent(String contactId) {

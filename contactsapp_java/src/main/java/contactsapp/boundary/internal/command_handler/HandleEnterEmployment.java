@@ -24,6 +24,8 @@ public class HandleEnterEmployment implements Function<EnterEmployment, Object>{
 	public Object apply(EnterEmployment command) {
 		String personId = command.getPersonId();
 		String companyId = command.getCompanyId();
+		String role = command.getRole();
+		
 		Optional<Contact> person = contactList.getContact(personId);
 		Optional<Contact> company = contactList.getContact(companyId);
 
@@ -40,7 +42,7 @@ public class HandleEnterEmployment implements Function<EnterEmployment, Object>{
 			return new ShouldBeCompany(companyId);
 		}
 		
-		EmploymentEntered employmentEntered = new EmploymentEntered(personId, companyId);
+		EmploymentEntered employmentEntered = new EmploymentEntered(personId, companyId,role);
 		return employmentEntered;
 	}
 
