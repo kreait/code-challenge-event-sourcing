@@ -1,7 +1,6 @@
 package contactsapp.boundary;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Instant;
@@ -12,8 +11,8 @@ import org.junit.Test;
 
 import contactsapp.boundary.internal.domain.Contact;
 import contactsapp.boundary.internal.event.CompanyAdded;
+import contactsapp.boundary.internal.event.ContactRenamed;
 import contactsapp.boundary.internal.event.EmploymentEntered;
-import contactsapp.boundary.internal.event.MissingContact;
 import contactsapp.boundary.internal.event.PersonAdded;
 import contactsapp.command.AddCompany;
 import contactsapp.command.AddPerson;
@@ -24,98 +23,66 @@ import eventstore.EventStore;
 
 public class ContactListBoundaryTest {
 	private static final String MAX_MUSTERMANN = "Max Mustermann";
-	private static final String BERTIL_MUTH = "Bertil Muth";
-
 	private static final String AGILE_COACH = "Agile Coach";
 
 	private static final String FOO_COM = "Foo.com";
 	private static final String BAR_COM = "Bar.com";
 
-	private EventStore testEventStore;
-	private ContactListBoundary contactListBoundary;
+	private EventStore eventStore;
+	private ContactListBoundary boundary;
 
 	@Before
 	public void setup() {
-		testEventStore = new EventStore();
-		contactListBoundary = new ContactListBoundary(testEventStore);
-		testEventStore.addSubscriber(contactListBoundary::reactToEvent);
+		eventStore = new EventStore();
+		boundary = new ContactListBoundary(eventStore);
+		eventStore.addSubscriber(boundary::reactToEvent);
 	}
-
+	
 	@Test
 	public void contact_list_is_initially_empty() {
-		List<Contact> contacts = findContacts(contactListBoundary);
+		List<Contact> contacts = findContacts(boundary);
 		assertTrue(contacts.isEmpty());
 	}
 
 	@Test
-	public void adds_person() {
-		PersonAdded personAdded = addPerson(BERTIL_MUTH, contactListBoundary);
-		assertEquals(BERTIL_MUTH, personAdded.getPersonName());
+	public void adds_person() throws InterruptedException {
+		Object handledEvent = addPerson(MAX_MUSTERMANN, boundary);
+		assertTrue(handledEvent instanceof PersonAdded);
 	}
 
 	@Test
-	public void adds_company() {
-		CompanyAdded companyAdded = addCompany(FOO_COM, contactListBoundary);
-		assertEquals(FOO_COM, companyAdded.getCompanyName());
+	public void adds_company() throws InterruptedException {
+		Object handledEvent = addCompany(FOO_COM, boundary);
+		assertTrue(handledEvent instanceof CompanyAdded);
 	}
 
 	@Test
-	public void adds_two_companies_with_the_same_name() {
-		addCompany(FOO_COM, contactListBoundary);
-		addCompany(FOO_COM, contactListBoundary);
-		List<Contact> contacts = findContacts(contactListBoundary);
+	public void renames_contact() throws InterruptedException {
+		CompanyAdded companyAdded = (CompanyAdded) addCompany(FOO_COM, boundary);
+		String companyId = companyAdded.getCompanyId();
 
-		assertEquals(2, contacts.size());
-		assertEquals(FOO_COM, contacts.get(0).getName());
-		assertEquals(FOO_COM, contacts.get(1).getName());
-		assertFalse(contacts.get(0).getId().equals(contacts.get(1).getId()));
+		renameContact(companyId, BAR_COM, boundary);
+		Object handledEvent = boundary.getHandledEvent();
+		assertTrue(handledEvent instanceof ContactRenamed);
 	}
-
+	
 	@Test
-	public void renames_existing_person() {
-		PersonAdded personAdded = addPerson(BERTIL_MUTH, contactListBoundary);
-		String contactId = personAdded.getPersonId();
-		List<Contact> newContacts = renameContact(contactId, MAX_MUSTERMANN, contactListBoundary);
-
-		assertEquals(1, newContacts.size());
-		assertEquals(MAX_MUSTERMANN, newContacts.get(0).getName());
-	}
-
-	@Test
-	public void renames_existing_company() {
-		CompanyAdded companyAdded = addCompany(BAR_COM, contactListBoundary);
-		String contactId = companyAdded.getCompanyId();
-		List<Contact> newContacts = renameContact(contactId, FOO_COM, contactListBoundary);
-
-		assertEquals(1, newContacts.size());
-		assertEquals(FOO_COM, newContacts.get(0).getName());
-	}
-
-	@Test
-	public void renaming_non_existing_company_fails() {
-		String invalidContactId = "INVALID_CONTACT_ID";
-		MissingContact missingContact = renameInvalidContact(invalidContactId, BAR_COM, contactListBoundary);
-		assertEquals(invalidContactId, missingContact.getContactId());
-	}
-
-	@Test
-	public void person_enters_employment() {
-		PersonAdded personAdded = addPerson(BERTIL_MUTH, contactListBoundary);
-		CompanyAdded companyAdded = addCompany(BAR_COM, contactListBoundary);
+	public void person_enters_employment() throws InterruptedException {
+		PersonAdded personAdded = (PersonAdded) addPerson(MAX_MUSTERMANN, boundary);
+		CompanyAdded companyAdded = (CompanyAdded) addCompany(FOO_COM, boundary);
+		
 		String personId = personAdded.getPersonId();
 		String companyId = companyAdded.getCompanyId();
 
-		EmploymentEntered employmentEntered = enterEmployment(personId, companyId, AGILE_COACH, contactListBoundary);
-		assertEquals(personId, employmentEntered.getPersonId());
-		assertEquals(companyId, employmentEntered.getCompanyId());
-		assertEquals(AGILE_COACH, employmentEntered.getRole());
+		Object handledEvent = enterEmployment(personId, companyId, AGILE_COACH, boundary);
+		assertTrue(handledEvent instanceof EmploymentEntered);
 	}
 
 	@Test
 	public void replays_zero_events() {
-		ContactListBoundary newContactListBoundary = new ContactListBoundary(testEventStore);
-		testEventStore.addSubscriber(newContactListBoundary::reactToEvent);
-		testEventStore.replay();
+		ContactListBoundary newContactListBoundary = new ContactListBoundary(eventStore);
+		eventStore.addSubscriber(newContactListBoundary::reactToEvent);
+		eventStore.replay();
 
 		List<Contact> contacts = findContacts(newContactListBoundary);
 		assertTrue(contacts.isEmpty());
@@ -123,12 +90,12 @@ public class ContactListBoundaryTest {
 
 	@Test
 	public void replays_two_events() {
-		addPerson(MAX_MUSTERMANN, contactListBoundary);
-		addCompany(BAR_COM, contactListBoundary);
+		addPerson(MAX_MUSTERMANN, boundary);
+		addCompany(BAR_COM, boundary);
 
-		ContactListBoundary newContactListBoundary = new ContactListBoundary(testEventStore);
-		testEventStore.addSubscriber(newContactListBoundary::reactToEvent);
-		testEventStore.replay();
+		ContactListBoundary newContactListBoundary = new ContactListBoundary(eventStore);
+		eventStore.addSubscriber(newContactListBoundary::reactToEvent);
+		eventStore.replay();
 
 		List<Contact> newContacts = findContacts(newContactListBoundary);
 		assertEquals(2, newContacts.size());
@@ -138,16 +105,16 @@ public class ContactListBoundaryTest {
 
 	@Test
 	public void replays_until_after_first_event() throws InterruptedException {
-		addPerson(MAX_MUSTERMANN, contactListBoundary);
+		addPerson(MAX_MUSTERMANN, boundary);
 
 		Instant afterFirstEvent = Instant.now();
 		waitNanoSecond();
 
-		addCompany(BAR_COM, contactListBoundary);
+		addCompany(BAR_COM, boundary);
 
-		ContactListBoundary newContactListBoundary = new ContactListBoundary(testEventStore);
-		testEventStore.addSubscriber(newContactListBoundary::reactToEvent);
-		testEventStore.replayUntil(afterFirstEvent);
+		ContactListBoundary newContactListBoundary = new ContactListBoundary(eventStore);
+		eventStore.addSubscriber(newContactListBoundary::reactToEvent);
+		eventStore.replayUntil(afterFirstEvent);
 
 		List<Contact> newContacts = findContacts(newContactListBoundary);
 		assertEquals(1, newContacts.size());
@@ -158,39 +125,32 @@ public class ContactListBoundaryTest {
 		Thread.sleep(0, 1);
 	}
 
-	private PersonAdded addPerson(String personName, ContactListBoundary boundary) {
+	private Object addPerson(String personName, ContactListBoundary boundary) {
 		AddPerson command = new AddPerson(personName);
-		boundary.reactToCommand(command).get();
-		PersonAdded personAdded = (PersonAdded) contactListBoundary.getHandledEvent();
-		return personAdded;
+		boundary.reactToCommand(command);
+		Object handledEvent = boundary.getHandledEvent();
+		return handledEvent;
 	}
 
-	private CompanyAdded addCompany(String companyName, ContactListBoundary boundary) {
+	private Object addCompany(String companyName, ContactListBoundary boundary) {
 		AddCompany command = new AddCompany(companyName);
 		boundary.reactToCommand(command);
-		CompanyAdded companyAdded = (CompanyAdded)contactListBoundary.getHandledEvent(); 
-		return companyAdded;
+		Object handledEvent = boundary.getHandledEvent();
+		return handledEvent;
 	}
 
-	private List<Contact> renameContact(String contactId, String newName, ContactListBoundary boundary) {
+	private Object renameContact(String contactId, String newName, ContactListBoundary boundary) {
 		RenameContact command = new RenameContact(contactId, newName);
 		boundary.reactToCommand(command);
-		List<Contact> contacts = findContacts(boundary);
-		return contacts;
+		Object handledEvent = boundary.getHandledEvent();
+		return handledEvent;
 	}
 
-	private EmploymentEntered enterEmployment(String personId, String companyId, String role,
-			ContactListBoundary boundary) {
+	private Object enterEmployment(String personId, String companyId, String role, ContactListBoundary boundary) {
 		EnterEmployment command = new EnterEmployment(personId, companyId, role);
-		boundary.reactToCommand(command).get();
-		EmploymentEntered employmentEntered = (EmploymentEntered) contactListBoundary.getHandledEvent(); 
-		return employmentEntered;
-	}
-
-	private MissingContact renameInvalidContact(String contactId, String newName, ContactListBoundary boundary) {
-		RenameContact command = new RenameContact(contactId, newName);
-		MissingContact missingContact = (MissingContact) boundary.reactToCommand(command).get();
-		return missingContact;
+		boundary.reactToCommand(command);
+		Object handledEvent = boundary.getHandledEvent();
+		return handledEvent;
 	}
 
 	private List<Contact> findContacts(ContactListBoundary boundary) {
