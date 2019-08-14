@@ -1,6 +1,7 @@
 version = '0.1'
 
 apply plugin: 'java'
+apply plugin: 'application'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'maven'
@@ -28,6 +29,10 @@ repositories {
 	maven {
 		url "https://oss.sonatype.org/content/repositories/snapshots/"
 	}
+}
+
+application {
+    mainClassName = 'contactsapp.main.ContactsApp'
 }
 
 task javadocJar(type: Jar) {
