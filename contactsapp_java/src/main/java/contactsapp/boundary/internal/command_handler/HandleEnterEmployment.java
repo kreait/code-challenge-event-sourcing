@@ -9,6 +9,8 @@ import contactsapp.boundary.internal.domain.ContactList;
 import contactsapp.boundary.internal.domain.Person;
 import contactsapp.boundary.internal.event.EmploymentEntered;
 import contactsapp.boundary.internal.event.MissingContact;
+import contactsapp.boundary.internal.event.ShouldBeCompany;
+import contactsapp.boundary.internal.event.ShouldBePerson;
 import contactsapp.command.EnterEmployment;
 
 public class HandleEnterEmployment implements Function<EnterEmployment, Object>{

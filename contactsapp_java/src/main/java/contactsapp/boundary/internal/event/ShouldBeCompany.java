@@ -1,4 +1,4 @@
-package contactsapp.boundary.internal.command_handler;
+package contactsapp.boundary.internal.event;
 
 public class ShouldBeCompany {
 	private String contactId;
